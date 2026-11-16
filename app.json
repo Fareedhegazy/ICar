@@ -1,25 +1,40 @@
 {
   "expo": {
-    "name": "icar",
+    "name": "ICar",
     "slug": "icar",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
+    "backgroundColor": "#F2F5FA",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.icarapp.egypt",
+      "infoPlist": {
+        "CFBundleDevelopmentRegion": "ar",
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
+      "package": "com.icarapp.egypt",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#0B3D63",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+    "web": { "favicon": "./assets/favicon.png" },
+    "plugins": [
+      "expo-font",
+      "@react-native-community/datetimepicker",
+      ["expo-localization", { "supportsRTL": true, "forcesRTL": true }],
+      ["expo-notifications", { "color": "#FF7A45" }],
+      ["expo-image-picker", {
+        "cameraPermission": "ICar بيستخدم الكاميرا علشان تصوّر رخصة العربية ويطلع بياناتها.",
+        "photosPermission": "ICar بيستخدم الصور علشان ترفع صورة رخصة العربية."
+      }]
+    ]
   }
 }
