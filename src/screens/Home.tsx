@@ -5,6 +5,7 @@ import { useStore } from "../store";
 import { useColors } from "../theme";
 import { Banner, Card, H, T } from "../components/ui";
 import { ItemRow, ItemSheet } from "./Service";
+import CarSketch from "../components/CarSketch";
 
 export default function Home({ go }: { go: (tab: string) => void }) {
   const c = useColors();
@@ -34,6 +35,8 @@ export default function Home({ go }: { go: (tab: string) => void }) {
         <Stat n={warn.length} label="قرّب ميعاده" color={c.warn} />
         <Stat n={ok.length} label="تمام" color={c.ok} />
       </View>
+
+      <CarSketch />
 
       <H>الجاي في الصيانة</H>
       {upcoming.length ? (
