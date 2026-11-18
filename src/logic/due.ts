@@ -1,4 +1,5 @@
 import { CATALOG, CatalogItem, Transmission } from "../data/catalog";
+import { deviceCountry, getCountry } from "../data/countries";
 import { Lang, deviceLang, getLang, locale, t } from "../i18n";
 
 export type ItemState = { km?: number; mo?: number; lastKm?: number | null; lastDate?: string | null };
@@ -14,13 +15,15 @@ export type AppState = {
   licenceDue: string;
   items: Record<string, ItemState>;
   log: LogEntry[];
-  cache: { specs?: { rows: { k: string; v: string }[]; note?: string }; parts?: Record<string, PartInfo>; price?: { low: number; high: number; why?: string; tips?: string; at: string } };
+  cache: { specs?: { rows: { k: string; v: string }[]; note?: string }; parts?: Record<string, PartInfo>; price?: { low: number; high: number; why?: string; tips?: string; at: string; cur?: string } };
   notify: boolean;
   lang: Lang;
+  country: string;
+  countryConfirmed: boolean;
 };
 
 export const blankState = (): AppState => ({
-  car: null, odo: 0, odoDate: null, monthlyKm: 1500, transmission: "manual", licenceDue: "", items: {}, log: [], cache: {}, notify: true, lang: deviceLang(),
+  car: null, odo: 0, odoDate: null, monthlyKm: 1500, transmission: "manual", licenceDue: "", items: {}, log: [], cache: {}, notify: true, lang: deviceLang(), country: deviceCountry(), countryConfirmed: false,
 });
 
 export type Status = "ok" | "warn" | "bad" | "none";
@@ -44,6 +47,10 @@ const df = (opts: Intl.DateTimeFormatOptions, key: string) => (DFS[getLang() + k
 export const fd = (s?: string | null) => (s ? df({ day: "numeric", month: "long", year: "numeric" }, "long").format(parseISO(s)) : "");
 export const fmonth = (d: Date) => df({ month: "short" }, "mon").format(d);
 export const fmt = (n: number | string | null | undefined) => Number(n || 0).toLocaleString(getLang() === "ar" ? "en-US" : locale());
+
+/** Currency label for the active country, e.g. "ج.م" in Arabic or "EGP". */
+export const cur = () => { const c = getCountry(); return getLang() === "ar" && c.curAr ? c.curAr : c.cur; };
+export const money = (n: number | string | null | undefined) => `${fmt(n)} ${cur()}`;
 
 export function catalogFor(t: Transmission) {
   return CATALOG.filter((x) => !x.trans || ([] as Transmission[]).concat(x.trans).includes(t));
@@ -100,5 +107,5 @@ export function carName(S: AppState) {
 export function carContext(S: AppState) {
   const c = S.car || ({} as Car);
   const tr = S.transmission === "auto" ? "automatic" : S.transmission === "amt" ? "robotised manual (Easytronic/SensoDrive)" : "manual";
-  return `${c.make || c.make_ar || ""} ${c.model || ""} ${c.body || ""}, year ${c.year || ""}, engine ${c.cc || ""} cc ${c.cylinders || ""} cyl ${c.fuel || ""}, ${tr} gearbox, odometer ${S.odo} km, used in Egypt`;
+  return `${c.make || c.make_ar || ""} ${c.model || ""} ${c.body || ""}, year ${c.year || ""}, engine ${c.cc || ""} cc ${c.cylinders || ""} cyl ${c.fuel || ""}, ${tr} gearbox, odometer ${S.odo} km, used in ${getCountry().en}`;
 }

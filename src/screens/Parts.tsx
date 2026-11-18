@@ -1,5 +1,6 @@
+import * as Location from "expo-location";
 import React, { useState } from "react";
-import { Linking, Pressable, View } from "react-native";
+import { Linking, Platform, Pressable, View } from "react-native";
 import { aiErrorText, askAI } from "../ai";
 import { PARTS } from "../data/catalog";
 import { PartInfo, carContext } from "../logic/due";
@@ -8,7 +9,23 @@ import { useStore } from "../store";
 import { useColors } from "../theme";
 import { Btn, Card, H, Row, T } from "../components/ui";
 
-const maps = (q: string) => Linking.openURL("https://www.google.com/maps/search/" + encodeURIComponent(q));
+/**
+ * Opens a maps search around the user. Location permission is asked only here, when the user wants the
+ * nearest shop; if it is refused, maps falls back to its own idea of "near me".
+ */
+async function maps(q: string) {
+  let at = "";
+  try {
+    if (Platform.OS !== "web") {
+      const p = await Location.requestForegroundPermissionsAsync();
+      if (p.granted) {
+        const pos = (await Location.getLastKnownPositionAsync()) || (await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced }));
+        if (pos) at = `/@${pos.coords.latitude.toFixed(5)},${pos.coords.longitude.toFixed(5)},14z`;
+      }
+    }
+  } catch {}
+  Linking.openURL("https://www.google.com/maps/search/" + encodeURIComponent(q) + at);
+}
 const images = (q: string) => Linking.openURL("https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(q));
 
 export default function Parts() {

@@ -1,4 +1,4 @@
-// de translations, keyed by the Arabic source text. Generated from the app strings; edit freely.
+// de translations, keyed by the Arabic source text. Add a line here for every new t("…") string.
 const d: Record<string, string> = {
   "خدمة الذكاء الاصطناعي لسه مش متوصلة في النسخة دي.": "Der KI-Dienst ist in dieser Version noch nicht verbunden.",
   "طلبات كتير ورا بعض. استنى دقيقة وجرب تاني.": "Zu viele Anfragen hintereinander. Warte eine Minute und versuche es erneut.",
@@ -254,7 +254,6 @@ const d: Record<string, string> = {
   "تجديد الرخصة": "Zulassungsverlängerung",
   "حدد التاريخ من صفحة عربيتي": "Datum auf der Seite Mein Auto festlegen",
   "صرفت السنة دي": "Ausgaben dieses Jahr",
-  "{n} ج.م": "{n} EGP",
   "عدد الصيانات المسجلة": "Erfasste Wartungen",
   "صورة واضحة، من غير انعكاس نور": "Ein scharfes Foto ohne Spiegelung",
   "محتاج إذن الكاميرا. تقدر ترفع صورة من المعرض بدلها.": "Kamerazugriff wird benötigt. Du kannst stattdessen ein Foto aus der Galerie wählen.",
@@ -296,7 +295,6 @@ const d: Record<string, string> = {
   "اتغير": "Erledigt",
   "اتغير بتاريخ": "Gewechselt am",
   "العداد وقتها (كم)": "Kilometerstand damals (km)",
-  "التكلفة (ج.م)": "Kosten (EGP)",
   "المكان / الميكانيكي": "Werkstatt / Mechaniker",
   "يتغير كل (كم)": "Wechsel alle (km)",
   "بالوقت بس": "Nur nach Zeit",
@@ -355,7 +353,6 @@ const d: Record<string, string> = {
   "متأكد؟": "Sicher?",
   "مسح": "Löschen",
   "لسه مفيش صيانات. أول ما تسجل تغيير بند من صفحة الصيانة هيظهر هنا، أو ضيف صيانة حرة (كهربا، سمكرة، إصلاح).": "Noch keine Wartungen. Sobald du auf der Seite Wartung einen Wechsel einträgst, erscheint er hier. Du kannst auch andere Arbeiten hinzufügen (Elektrik, Karosserie, Reparatur).",
-  "الإجمالي: {n} ج.م": "Gesamt: {n} EGP",
   "صيانة جديدة": "Neue Wartung",
   "التاريخ": "Datum",
   "العداد (كم)": "Kilometerstand (km)",
@@ -389,5 +386,12 @@ const d: Record<string, string> = {
   "القطع": "Teile",
   "السعر": "Preis",
   "اقفل ICar وافتحه تاني علشان اتجاه الشاشة يتظبط على اللغة الجديدة.": "Schließe ICar und öffne es erneut, damit die Bildschirmrichtung zur neuen Sprache passt.",
+  "الدولة": "Land",
+  "أيوه، صح": "Ja, stimmt",
+  "غيّر الدولة": "Land ändern",
+  "حددناها من إعدادات موبايلك. أكّدها أو غيّرها علشان العملة والأسعار ومواقع الإعلانات تبقى مظبوطة.": "Aus den Einstellungen deines Handys ermittelt. Bestätige oder ändere es, damit Währung, Preise und Anzeigenportale stimmen.",
+  "اختار دولتك": "Wähle dein Land",
+  "التكلفة ({c})": "Kosten ({c})",
+  "الإجمالي: {n}": "Gesamt: {n}",
 };
 export default d;

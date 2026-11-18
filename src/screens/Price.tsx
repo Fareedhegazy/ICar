@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Linking, View } from "react-native";
 import { aiErrorText, askAI } from "../ai";
-import { carContext, carName, fd, fmt, today } from "../logic/due";
+import { getCountry } from "../data/countries";
+import { carContext, carName, cur, fd, fmt, today } from "../logic/due";
 import { t } from "../i18n";
 import { useStore } from "../store";
 import { useColors } from "../theme";
@@ -26,7 +27,7 @@ export default function Price() {
     setBusy(true); setErr("");
     try {
       const r = await askAI<{ low: number; high: number; why?: string; tips?: string }>("price", { car: carContext(S), condition: t(cond), paint: t(paint), note, date: today() });
-      update((d) => { d.cache.price = { ...r, at: today() }; });
+      update((d) => { d.cache.price = { ...r, at: today(), cur: cur() }; });
     } catch (e) { setErr(aiErrorText(e)); }
     setBusy(false);
   };
@@ -46,7 +47,7 @@ export default function Price() {
       {p ? (
         <Card>
           <T size={12} color={c.muted}>{t("التقدير بتاريخ {d}", { d: fd(p.at) })}</T>
-          <T w="bold" size={26}>{t("{n} ج.م", { n: `${fmt(p.low)} – ${fmt(p.high)}` })}</T>
+          <T w="bold" size={26}>{fmt(p.low)} – {fmt(p.high)} {p.cur || cur()}</T>
           {p.why ? <T size={14}>{p.why}</T> : null}
           {p.tips ? <T size={14}><T w="semi" size={14}>{t("يزوّد السعر: ")}</T>{p.tips}</T> : null}
           <T size={12} color={c.muted}>{t("تقدير بالذكاء الاصطناعي، مش سعر رسمي. قارنه بالإعلانات الحالية.")}</T>
@@ -54,9 +55,7 @@ export default function Price() {
       ) : null}
       <H>{t("قارن بالإعلانات الحالية")}</H>
       <Row>
-        <Btn small kind="soft" title="Hatla2ee" onPress={() => search("hatla2ee.com")} />
-        <Btn small kind="soft" title="ContactCars" onPress={() => search("contactcars.com")} />
-        <Btn small kind="soft" title="Dubizzle" onPress={() => search("dubizzle.com.eg")} />
+        {getCountry().sites.map((s) => <Btn key={s.d} small kind="soft" title={s.n} onPress={() => search(s.d)} />)}
         <Btn small kind="soft" title="Google" onPress={() => search()} />
       </Row>
     </View>

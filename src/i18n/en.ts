@@ -1,4 +1,4 @@
-// en translations, keyed by the Arabic source text. Generated from the app strings; edit freely.
+// en translations, keyed by the Arabic source text. Add a line here for every new t("…") string.
 const d: Record<string, string> = {
   "خدمة الذكاء الاصطناعي لسه مش متوصلة في النسخة دي.": "The AI service isn't connected in this version yet.",
   "طلبات كتير ورا بعض. استنى دقيقة وجرب تاني.": "Too many requests in a row. Wait a minute and try again.",
@@ -254,7 +254,6 @@ const d: Record<string, string> = {
   "تجديد الرخصة": "Licence renewal",
   "حدد التاريخ من صفحة عربيتي": "Set the date on the My car page",
   "صرفت السنة دي": "Spent this year",
-  "{n} ج.م": "EGP {n}",
   "عدد الصيانات المسجلة": "Services logged",
   "صورة واضحة، من غير انعكاس نور": "A clear photo, without glare",
   "محتاج إذن الكاميرا. تقدر ترفع صورة من المعرض بدلها.": "Camera permission is needed. You can pick a photo from the gallery instead.",
@@ -296,7 +295,6 @@ const d: Record<string, string> = {
   "اتغير": "Done",
   "اتغير بتاريخ": "Changed on",
   "العداد وقتها (كم)": "Odometer at the time (km)",
-  "التكلفة (ج.م)": "Cost (EGP)",
   "المكان / الميكانيكي": "Garage / mechanic",
   "يتغير كل (كم)": "Change every (km)",
   "بالوقت بس": "Time only",
@@ -355,7 +353,6 @@ const d: Record<string, string> = {
   "متأكد؟": "Sure?",
   "مسح": "Delete",
   "لسه مفيش صيانات. أول ما تسجل تغيير بند من صفحة الصيانة هيظهر هنا، أو ضيف صيانة حرة (كهربا، سمكرة، إصلاح).": "No services yet. Once you log an item on the Service page it shows up here, or add any other job (electrics, bodywork, repair).",
-  "الإجمالي: {n} ج.م": "Total: EGP {n}",
   "صيانة جديدة": "New service",
   "التاريخ": "Date",
   "العداد (كم)": "Odometer (km)",
@@ -389,5 +386,12 @@ const d: Record<string, string> = {
   "القطع": "Parts",
   "السعر": "Price",
   "اقفل ICar وافتحه تاني علشان اتجاه الشاشة يتظبط على اللغة الجديدة.": "Close and reopen ICar so the screen direction matches the new language.",
+  "الدولة": "Country",
+  "أيوه، صح": "Yes, correct",
+  "غيّر الدولة": "Change country",
+  "حددناها من إعدادات موبايلك. أكّدها أو غيّرها علشان العملة والأسعار ومواقع الإعلانات تبقى مظبوطة.": "We picked this from your phone settings. Confirm or change it so the currency, prices and listing sites are right.",
+  "اختار دولتك": "Choose your country",
+  "التكلفة ({c})": "Cost ({c})",
+  "الإجمالي: {n}": "Total: {n}",
 };
 export default d;

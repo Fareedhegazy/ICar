@@ -1,5 +1,6 @@
 // Client for the ICar AI backend (Supabase Edge Function "icar-ai").
 // The Claude API key lives only on the server, never in the app.
+import { getCountry } from "./data/countries";
 import { getLang, t } from "./i18n";
 const BASE = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const ANON = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
@@ -13,7 +14,7 @@ export async function askAI<T = { text: string }>(task: AiTask, payload: Record<
   const res = await fetch(`${BASE}/functions/v1/icar-ai`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${ANON}`, apikey: ANON as string },
-    body: JSON.stringify({ task, payload, image: imageBase64, lang: getLang() }),
+    body: JSON.stringify({ task, payload, image: imageBase64, lang: getLang(), country: getCountry().en, currency: getCountry().cur }),
   });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(body.error || `http_${res.status}`);

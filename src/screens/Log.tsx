@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View } from "react-native";
 import { t } from "../i18n";
-import { catalogFor, fmonth, fmt, parseISO, today } from "../logic/due";
+import { catalogFor, cur, fmonth, fmt, money, parseISO, today } from "../logic/due";
 import { useStore } from "../store";
 import { useColors } from "../theme";
 import { Btn, Card, Chip, DateField, Field, H, Row, Sheet, T } from "../components/ui";
@@ -58,7 +58,7 @@ export default function Log() {
                   {l.note ? <T size={13} color={c.muted}>{l.note}</T> : null}
                 </View>
                 <View style={{ alignItems: "flex-end", gap: 4 }}>
-                  {l.cost ? <T w="semi">{t("{n} ج.م", { n: fmt(l.cost) })}</T> : null}
+                  {l.cost ? <T w="semi">{money(l.cost)}</T> : null}
                   <Btn small kind="soft" title={armed === l.id ? t("متأكد؟") : t("مسح")} onPress={() => del(l.id)} />
                 </View>
               </View>
@@ -68,7 +68,7 @@ export default function Log() {
       ) : (
         <Card><T color={c.muted}>{t("لسه مفيش صيانات. أول ما تسجل تغيير بند من صفحة الصيانة هيظهر هنا، أو ضيف صيانة حرة (كهربا، سمكرة، إصلاح).")}</T></Card>
       )}
-      {S.log.length ? <T size={13} color={c.muted}>{t("الإجمالي: {n} ج.م", { n: fmt(total) })}</T> : null}
+      {S.log.length ? <T size={13} color={c.muted}>{t("الإجمالي: {n}", { n: money(total) })}</T> : null}
 
       <Sheet visible={open} title={t("صيانة جديدة")} onClose={() => setOpen(false)}>
         <Row>
@@ -77,7 +77,7 @@ export default function Log() {
         </Row>
         <Field label={t("إيه اللي اتعمل")} value={what} onChangeText={setWhat} placeholder={t("مثال: تغيير مساعدين أمامي")} />
         <Row>
-          <Field label={t("التكلفة (ج.م)")} keyboardType="number-pad" value={cost} onChangeText={setCost} />
+          <Field label={t("التكلفة ({c})", { c: cur() })} keyboardType="number-pad" value={cost} onChangeText={setCost} />
           <Field label={t("المكان")} value={where} onChangeText={setWhere} />
         </Row>
         <Field label={t("ملاحظات")} multiline value={note} onChangeText={setNote} />

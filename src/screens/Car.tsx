@@ -6,10 +6,11 @@ import { aiErrorText, askAI } from "../ai";
 import { Transmission } from "../data/catalog";
 import { Car as CarT, carContext, cfg, today } from "../logic/due";
 import { ensurePermission } from "../notify";
+import { COUNTRIES, countryName, countryOf } from "../data/countries";
 import { LANGS, Lang, isRTL, t } from "../i18n";
 import { useStore } from "../store";
 import { useColors } from "../theme";
-import { Banner, Btn, Card, Chip, DateField, Field, H, Row, T } from "../components/ui";
+import { Banner, Btn, Card, Chip, DateField, Field, H, Row, Sheet, T } from "../components/ui";
 import { Kv } from "./Home";
 
 type Extract = Partial<CarT> & { inspection_year?: number | null; licence_expiry?: string | null };
@@ -67,6 +68,12 @@ export default function CarScreen({ go }: { go: (tab: string) => void }) {
   const [trans, setTrans] = useState<Transmission>(S.transmission);
   const [odo, setOdo] = useState(""), [monthly, setMonthly] = useState(""), [lic, setLic] = useState(""), [oil, setOil] = useState("");
   const [specBusy, setSpecBusy] = useState(false), [specErr, setSpecErr] = useState("");
+  const [pickCountry, setPickCountry] = useState(false);
+  const country = countryOf(S.country);
+  const setCountryTo = (k: string) => {
+    update((d) => { if (d.country !== k) d.cache.price = undefined; d.country = k; d.countryConfirmed = true; });
+    setPickCountry(false);
+  };
 
   useEffect(() => {
     if (S.car) setF(S.car);
@@ -100,7 +107,17 @@ export default function CarScreen({ go }: { go: (tab: string) => void }) {
       <Card>
         <T size={13} color={c.muted}>{t("اللغة")} · Language</T>
         <Row>{LANGS.map((l) => <Chip key={l.k} label={l.n} on={S.lang === l.k} onPress={() => update((d) => { d.lang = l.k as Lang; d.cache = {}; })} />)}</Row>
+        <T size={13} color={c.muted}>{t("الدولة")}</T>
+        <Row>
+          <T w="semi">{countryName(country, S.lang)}</T>
+          {!S.countryConfirmed ? <Btn small title={t("أيوه، صح")} onPress={() => setCountryTo(country.k)} /> : null}
+          <Btn small kind="soft" title={t("غيّر الدولة")} onPress={() => setPickCountry(true)} />
+        </Row>
+        {!S.countryConfirmed ? <T size={12} color={c.muted}>{t("حددناها من إعدادات موبايلك. أكّدها أو غيّرها علشان العملة والأسعار ومواقع الإعلانات تبقى مظبوطة.")}</T> : null}
       </Card>
+      <Sheet visible={pickCountry} title={t("اختار دولتك")} onClose={() => setPickCountry(false)}>
+        <Row>{COUNTRIES.map((x) => <Chip key={x.k} label={countryName(x, S.lang)} on={S.country === x.k} onPress={() => setCountryTo(x.k)} />)}</Row>
+      </Sheet>
       {!S.car ? (
         <>
           <H>{t("ابدأ بصورة الرخصة")}</H>

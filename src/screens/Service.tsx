@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Linking, View } from "react-native";
-import { Due, carName, catalogFor, cfg, due, dueText, fd, fmt, statusLabel, today } from "../logic/due";
+import { Due, carName, catalogFor, cfg, cur, due, dueText, fd, fmt, statusLabel, today } from "../logic/due";
 import { t } from "../i18n";
 import { useStore } from "../store";
 import { useColors } from "../theme";
@@ -67,7 +67,7 @@ export function ItemSheet({ k, onClose }: { k: string | null; onClose: () => voi
         <Field label={t("العداد وقتها (كم)")} keyboardType="number-pad" value={km} onChangeText={setKm} />
       </Row>
       <Row>
-        <Field label={t("التكلفة (ج.م)")} keyboardType="number-pad" value={cost} onChangeText={setCost} />
+        <Field label={t("التكلفة ({c})", { c: cur() })} keyboardType="number-pad" value={cost} onChangeText={setCost} />
         <Field label={t("المكان / الميكانيكي")} value={where} onChangeText={setWhere} />
       </Row>
       <Row>

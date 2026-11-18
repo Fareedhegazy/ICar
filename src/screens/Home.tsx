@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View } from "react-native";
-import { catalogFor, daysBetween, due, fd, fmt, today } from "../logic/due";
+import { catalogFor, daysBetween, due, fd, money, today } from "../logic/due";
 import { t } from "../i18n";
 import { useStore } from "../store";
 import { useColors } from "../theme";
@@ -50,7 +50,7 @@ export default function Home({ go }: { go: (tab: string) => void }) {
       <H>{t("الرخصة والمصاريف")}</H>
       <Card>
         <Kv k={t("تجديد الرخصة")} v={S.licenceDue ? fd(S.licenceDue) : t("حدد التاريخ من صفحة عربيتي")} />
-        <Kv k={t("صرفت السنة دي")} v={t("{n} ج.م", { n: fmt(spent) })} />
+        <Kv k={t("صرفت السنة دي")} v={money(spent)} />
         <Kv k={t("عدد الصيانات المسجلة")} v={String(S.log.length)} />
       </Card>
       <ItemSheet k={open} onClose={() => setOpen(null)} />
