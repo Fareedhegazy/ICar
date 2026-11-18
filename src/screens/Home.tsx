@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View } from "react-native";
 import { catalogFor, daysBetween, due, fd, fmt, today } from "../logic/due";
+import { t } from "../i18n";
 import { useStore } from "../store";
 import { useColors } from "../theme";
 import { Banner, Card, H, T } from "../components/ui";
@@ -28,29 +29,29 @@ export default function Home({ go }: { go: (tab: string) => void }) {
 
   return (
     <View style={{ gap: 12 }}>
-      {bad.length ? <Banner status="bad">{bad.map((d) => d.n).join("، ")}: ميعادها عدى.</Banner> : null}
-      {lic != null && lic <= 60 ? <Banner status={lic <= 0 ? "bad" : "warn"}>تجديد الرخصة {lic <= 0 ? "متأخر" : `باقي عليه ${lic} يوم`} ({fd(S.licenceDue)})</Banner> : null}
+      {bad.length ? <Banner status="bad">{t("{x}: ميعادها عدى.", { x: bad.map((d) => t(d.n)).join(t("، ")) })}</Banner> : null}
+      {lic != null && lic <= 60 ? <Banner status={lic <= 0 ? "bad" : "warn"}>{lic <= 0 ? t("تجديد الرخصة متأخر ({d})", { d: fd(S.licenceDue) }) : t("تجديد الرخصة باقي عليه {n} يوم ({d})", { n: lic, d: fd(S.licenceDue) })}</Banner> : null}
       <View style={{ flexDirection: "row", gap: 8 }}>
-        <Stat n={bad.length} label="متأخر" color={c.bad} />
-        <Stat n={warn.length} label="قرّب ميعاده" color={c.warn} />
-        <Stat n={ok.length} label="تمام" color={c.ok} />
+        <Stat n={bad.length} label={t("متأخر")} color={c.bad} />
+        <Stat n={warn.length} label={t("قرّب ميعاده")} color={c.warn} />
+        <Stat n={ok.length} label={t("تمام")} color={c.ok} />
       </View>
 
       <CarSketch />
 
-      <H>الجاي في الصيانة</H>
+      <H>{t("الجاي في الصيانة")}</H>
       {upcoming.length ? (
         <Card style={{ padding: 0, gap: 0, overflow: "hidden" }}>{upcoming.map((d) => <ItemRow key={d.k} d={d} onPress={() => setOpen(d.k)} />)}</Card>
       ) : (
-        <Card><T color={c.muted}>لسه مفيش بنود متسجلة. روح لصفحة الصيانة وسجّل آخر مرة غيرت فيها كل حاجة.</T></Card>
+        <Card><T color={c.muted}>{t("لسه مفيش بنود متسجلة. روح لصفحة الصيانة وسجّل آخر مرة غيرت فيها كل حاجة.")}</T></Card>
       )}
-      {none.length ? <T size={13} color={c.muted} onPress={() => go("service")}>{none.length} بند لسه من غير تاريخ آخر تغيير. اضغط هنا تسجلهم.</T> : null}
+      {none.length ? <T size={13} color={c.muted} onPress={() => go("service")}>{t("{n} بند لسه من غير تاريخ آخر تغيير. اضغط هنا تسجلهم.", { n: none.length })}</T> : null}
 
-      <H>الرخصة والمصاريف</H>
+      <H>{t("الرخصة والمصاريف")}</H>
       <Card>
-        <Kv k="تجديد الرخصة" v={S.licenceDue ? fd(S.licenceDue) : "حدد التاريخ من صفحة عربيتي"} />
-        <Kv k="صرفت السنة دي" v={`${fmt(spent)} ج.م`} />
-        <Kv k="عدد الصيانات المسجلة" v={String(S.log.length)} />
+        <Kv k={t("تجديد الرخصة")} v={S.licenceDue ? fd(S.licenceDue) : t("حدد التاريخ من صفحة عربيتي")} />
+        <Kv k={t("صرفت السنة دي")} v={t("{n} ج.م", { n: fmt(spent) })} />
+        <Kv k={t("عدد الصيانات المسجلة")} v={String(S.log.length)} />
       </Card>
       <ItemSheet k={open} onClose={() => setOpen(null)} />
     </View>

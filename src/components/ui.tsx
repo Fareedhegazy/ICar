@@ -2,6 +2,7 @@ import DateTimePicker, { DateTimePickerAndroid } from "@react-native-community/d
 import React from "react";
 import { ActivityIndicator, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TextInputProps, TextProps, View, ViewStyle } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { isRTL, locale, t } from "../i18n";
 import { Status, fd, parseISO, toISO } from "../logic/due";
 import { Colors, F, useColors } from "../theme";
 
@@ -60,7 +61,7 @@ export function Field({ label, ...p }: TextInputProps & { label: string }) {
   return (
     <View style={{ gap: 4, flexGrow: 1, flexBasis: 140 }}>
       <T size={13} color={c.muted}>{label}</T>
-      <TextInput placeholderTextColor={c.muted} {...p} style={[styles.input, { backgroundColor: c.sunk, borderColor: c.line, color: c.ink, fontFamily: F.regular }, p.multiline && { minHeight: 80, textAlignVertical: "top" }]} />
+      <TextInput placeholderTextColor={c.muted} {...p} style={[styles.input, { backgroundColor: c.sunk, borderColor: c.line, color: c.ink, fontFamily: F.regular, textAlign: isRTL() ? "right" : "left" }, p.multiline && { minHeight: 80, textAlignVertical: "top" }]} />
     </View>
   );
 }
@@ -77,10 +78,10 @@ export function DateField({ label, value, onChange }: { label: string; value: st
     <View style={{ gap: 4, flexGrow: 1, flexBasis: 140 }}>
       <T size={13} color={c.muted}>{label}</T>
       <Pressable onPress={open} style={[styles.input, { backgroundColor: c.sunk, borderColor: c.line, justifyContent: "center" }]}>
-        <T color={value ? c.ink : c.muted}>{value ? fd(value) : "اختار التاريخ"}</T>
+        <T color={value ? c.ink : c.muted}>{value ? fd(value) : t("اختار التاريخ")}</T>
       </Pressable>
       {show && Platform.OS === "ios" ? (
-        <DateTimePicker value={date} mode="date" display="inline" locale="ar-EG" onChange={(_e, d) => { if (d) onChange(toISO(d)); setShow(false); }} />
+        <DateTimePicker value={date} mode="date" display="inline" locale={locale()} onChange={(_e, d) => { if (d) onChange(toISO(d)); setShow(false); }} />
       ) : null}
     </View>
   );
@@ -112,7 +113,7 @@ export function Sheet({ visible, title, onClose, children }: { visible: boolean;
       <SafeAreaView style={{ flex: 1, backgroundColor: c.surface }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: 16 }}>
           <T w="bold" size={18}>{title}</T>
-          <Pressable onPress={onClose} accessibilityLabel="إغلاق" hitSlop={12}><T size={24} color={c.muted}>×</T></Pressable>
+          <Pressable onPress={onClose} accessibilityLabel={t("إغلاق")} hitSlop={12}><T size={24} color={c.muted}>×</T></Pressable>
         </View>
         <ScrollView contentContainerStyle={{ padding: 16, paddingTop: 0, gap: 12 }} keyboardShouldPersistTaps="handled">{children}</ScrollView>
       </SafeAreaView>
@@ -131,5 +132,5 @@ export const Row = ({ children, style }: { children: React.ReactNode; style?: Vi
 );
 
 const styles = StyleSheet.create({
-  input: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 11, paddingVertical: 9, fontSize: 15, minHeight: 44, textAlign: "right" },
+  input: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 11, paddingVertical: 9, fontSize: 15, minHeight: 44 },
 });

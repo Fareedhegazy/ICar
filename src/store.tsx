@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { setLang } from "./i18n";
 import { AppState, blankState } from "./logic/due";
 import { rescheduleAll } from "./notify";
 
@@ -14,7 +15,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     AsyncStorage.getItem(KEY)
-      .then((raw) => { if (raw) setS({ ...blankState(), ...JSON.parse(raw) }); })
+      // Installs from before the language setting were Arabic-only, so keep them in Arabic.
+      .then((raw) => { if (raw) setS({ ...blankState(), lang: "ar", ...JSON.parse(raw) }); })
       .catch(() => {})
       .finally(() => setReady(true));
   }, []);
@@ -31,6 +33,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  // Set the active language before any child renders, so t() everywhere reads the same one.
+  setLang(S.lang);
   return <StoreCtx.Provider value={{ S, ready, update }}>{children}</StoreCtx.Provider>;
 }
 

@@ -2,6 +2,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { t } from "../i18n";
 import { carName, daysBetween, fd, fmt, today } from "../logic/due";
 import { useStore } from "../store";
 import { useColors } from "../theme";
@@ -38,10 +39,10 @@ export function Cluster() {
           </T>
           <T w="bold" size={22} color={c.petrolInk}>{S.car ? carName(S) : "ICar"}</T>
           <T size={13} color={c.petrolInk} style={{ opacity: 0.8 }}>
-            {S.car ? [S.car.body, S.car.cc && `${S.car.cc} سي سي`, S.car.fuel, S.car.color].filter(Boolean).join(" · ") : "صيانة، أعطال، قطع غيار، وسعر عربيتك في مكان واحد"}
+            {S.car ? [S.car.body, S.car.cc && t("{n} سي سي", { n: S.car.cc }), S.car.fuel, S.car.color].filter(Boolean).join(" · ") : t("صيانة، أعطال، قطع غيار، وسعر عربيتك في مكان واحد")}
           </T>
         </View>
-        {S.car ? <Btn small kind="ghost" title="تحديث العداد" onPress={() => { setOdo(String(S.odo || "")); setOdoOpen(true); }} style={{ borderColor: "rgba(255,255,255,0.5)" }} /> : null}
+        {S.car ? <Btn small kind="ghost" title={t("تحديث العداد")} onPress={() => { setOdo(String(S.odo || "")); setOdoOpen(true); }} style={{ borderColor: "rgba(255,255,255,0.5)" }} /> : null}
       </View>
       {S.car ? (
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginTop: 14, flexWrap: "wrap" }}>
@@ -53,14 +54,14 @@ export function Cluster() {
             ))}
             <T size={13} color={c.petrolInk} style={{ marginLeft: 4, opacity: 0.8 }}>km</T>
           </View>
-          {S.odoDate ? <T size={12} color={c.petrolInk} style={{ opacity: 0.75 }}>آخر تحديث {fd(S.odoDate)}</T> : null}
+          {S.odoDate ? <T size={12} color={c.petrolInk} style={{ opacity: 0.75 }}>{t("آخر تحديث {d}", { d: fd(S.odoDate) })}</T> : null}
         </View>
       ) : null}
 
-      <Sheet visible={odoOpen} title="تحديث العداد" onClose={() => setOdoOpen(false)}>
-        <Field label="قراءة العداد دلوقتي (كم)" keyboardType="number-pad" value={odo} onChangeText={setOdo} />
-        <T size={13} color={c.muted}>حدّث العداد كل كام أسبوع علشان المواعيد تبقى دقيقة. الحالي: {fmt(S.odo)} كم</T>
-        <Btn title="حفظ" onPress={saveOdo} />
+      <Sheet visible={odoOpen} title={t("تحديث العداد")} onClose={() => setOdoOpen(false)}>
+        <Field label={t("قراءة العداد دلوقتي (كم)")} keyboardType="number-pad" value={odo} onChangeText={setOdo} />
+        <T size={13} color={c.muted}>{t("حدّث العداد كل كام أسبوع علشان المواعيد تبقى دقيقة. الحالي: {n} كم", { n: fmt(S.odo) })}</T>
+        <Btn title={t("حفظ")} onPress={saveOdo} />
       </Sheet>
     </LinearGradient>
   );

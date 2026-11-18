@@ -1,5 +1,6 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
+import { t } from "./i18n";
 import { AppState, addDays, catalogFor, due, fd, parseISO, today } from "./logic/due";
 
 Notifications.setNotificationHandler({
@@ -11,7 +12,7 @@ const CHANNEL = "maintenance";
 export async function ensurePermission(): Promise<boolean> {
   if (Platform.OS === "web") return false;
   if (Platform.OS === "android") {
-    await Notifications.setNotificationChannelAsync(CHANNEL, { name: "مواعيد الصيانة", importance: Notifications.AndroidImportance.HIGH });
+    await Notifications.setNotificationChannelAsync(CHANNEL, { name: t("مواعيد الصيانة"), importance: Notifications.AndroidImportance.HIGH });
   }
   const cur = await Notifications.getPermissionsAsync();
   if (cur.granted) return true;
@@ -50,15 +51,15 @@ export async function rescheduleAll(S: AppState) {
     const d = due(S, c.k);
     if (d.state === "none" || !d.when) continue;
     if (d.state === "bad") {
-      add(addDays(today(), 1), `${c.n}: ميعاده عدى`, "اعمله في أقرب وقت، وسجّله في ICar بعد ما تخلص.");
+      add(addDays(today(), 1), t("{x}: ميعاده عدى", { x: t(c.n) }), t("اعمله في أقرب وقت، وسجّله في ICar بعد ما تخلص."));
       continue;
     }
-    add(addDays(d.when, -7), `${c.n} بعد أسبوع`, `المعاد المتوقع ${fd(d.when)}. ابدأ جهّز القطعة.`);
-    add(d.when, `النهارده ميعاد ${c.n}`, "لما تغيره سجّله في ICar علشان أحسبلك المعاد الجاي.");
+    add(addDays(d.when, -7), t("{x} بعد أسبوع", { x: t(c.n) }), t("المعاد المتوقع {d}. ابدأ جهّز القطعة.", { d: fd(d.when) }));
+    add(d.when, t("النهارده ميعاد {x}", { x: t(c.n) }), t("لما تغيره سجّله في ICar علشان أحسبلك المعاد الجاي."));
   }
   if (S.licenceDue) {
-    add(addDays(S.licenceDue, -30), "تجديد رخصة العربية بعد شهر", `ميعاد التجديد ${fd(S.licenceDue)}. جهّز الفحص والتأمين وادفع المخالفات.`);
-    add(addDays(S.licenceDue, -7), "تجديد الرخصة بعد أسبوع", `ميعاد التجديد ${fd(S.licenceDue)}.`);
+    add(addDays(S.licenceDue, -30), t("تجديد رخصة العربية بعد شهر"), t("ميعاد التجديد {d}. جهّز الفحص والتأمين وادفع المخالفات.", { d: fd(S.licenceDue) }));
+    add(addDays(S.licenceDue, -7), t("تجديد الرخصة بعد أسبوع"), t("ميعاد التجديد {d}.", { d: fd(S.licenceDue) }));
   }
 
   plan.sort((a, b) => a.date.getTime() - b.date.getTime());

@@ -6,6 +6,7 @@ import { aiErrorText, askAI } from "../ai";
 import { Transmission } from "../data/catalog";
 import { Car as CarT, carContext, cfg, today } from "../logic/due";
 import { ensurePermission } from "../notify";
+import { LANGS, Lang, isRTL, t } from "../i18n";
 import { useStore } from "../store";
 import { useColors } from "../theme";
 import { Banner, Btn, Card, Chip, DateField, Field, H, Row, T } from "../components/ui";
@@ -18,7 +19,7 @@ export function LicenceScan({ onDone }: { onDone: () => void }) {
   const c = useColors();
   const { update } = useStore();
   const [uri, setUri] = useState<string | null>(null);
-  const [msg, setMsg] = useState("صورة واضحة، من غير انعكاس نور");
+  const [msg, setMsg] = useState(t("صورة واضحة، من غير انعكاس نور"));
   const [busy, setBusy] = useState(false);
 
   const run = async (camera: boolean) => {
@@ -26,12 +27,12 @@ export function LicenceScan({ onDone }: { onDone: () => void }) {
     let res: ImagePicker.ImagePickerResult;
     if (camera) {
       const p = await ImagePicker.requestCameraPermissionsAsync();
-      if (!p.granted) { setMsg("محتاج إذن الكاميرا. تقدر ترفع صورة من المعرض بدلها."); return; }
+      if (!p.granted) { setMsg(t("محتاج إذن الكاميرا. تقدر ترفع صورة من المعرض بدلها.")); return; }
       res = await ImagePicker.launchCameraAsync(opts);
     } else res = await ImagePicker.launchImageLibraryAsync(opts);
     if (res.canceled || !res.assets?.[0]) return;
     const a = res.assets[0];
-    setUri(a.uri); setBusy(true); setMsg("بقرا الرخصة...");
+    setUri(a.uri); setBusy(true); setMsg(t("بقرا الرخصة..."));
     try {
       const small = await ImageManipulator.manipulateAsync(a.uri, [{ resize: { width: Math.min(1600, a.width || 1600) } }], { compress: 0.85, format: ImageManipulator.SaveFormat.JPEG, base64: true });
       const out = await askAI<Extract>("licence", {}, small.base64 || undefined);
@@ -41,7 +42,7 @@ export function LicenceScan({ onDone }: { onDone: () => void }) {
         else if (out.inspection_year && !d.licenceDue) d.licenceDue = `${out.inspection_year}-01-01`;
         d.cache = {};
       });
-      setMsg("اتقرت الرخصة. راجع البيانات تحت وكمّل العداد.");
+      setMsg(t("اتقرت الرخصة. راجع البيانات تحت وكمّل العداد."));
       onDone();
     } catch (e) { setMsg(aiErrorText(e)); }
     setBusy(false);
@@ -51,8 +52,8 @@ export function LicenceScan({ onDone }: { onDone: () => void }) {
     <View style={{ borderWidth: 2, borderStyle: "dashed", borderColor: c.line, borderRadius: 16, padding: 18, alignItems: "center", gap: 10 }}>
       {uri ? <Image source={{ uri }} style={{ width: "100%", height: 170, borderRadius: 10 }} resizeMode="contain" /> : null}
       <Row style={{ justifyContent: "center" }}>
-        <Btn title="صوّر الرخصة" onPress={() => run(true)} busy={busy} />
-        <Btn kind="soft" title="من المعرض" onPress={() => run(false)} disabled={busy} />
+        <Btn title={t("صوّر الرخصة")} onPress={() => run(true)} busy={busy} />
+        <Btn kind="soft" title={t("من المعرض")} onPress={() => run(false)} disabled={busy} />
       </Row>
       <T size={12} color={c.muted}>{msg}</T>
     </View>
@@ -96,54 +97,58 @@ export default function CarScreen({ go }: { go: (tab: string) => void }) {
 
   return (
     <View style={{ gap: 12 }}>
+      <Card>
+        <T size={13} color={c.muted}>{t("اللغة")} · Language</T>
+        <Row>{LANGS.map((l) => <Chip key={l.k} label={l.n} on={S.lang === l.k} onPress={() => update((d) => { d.lang = l.k as Lang; d.cache = {}; })} />)}</Row>
+      </Card>
       {!S.car ? (
         <>
-          <H>ابدأ بصورة الرخصة</H>
-          <T color={c.muted}>صوّر وش الرخصة اللي فيه الماركة والموديل والسي سي، والتطبيق هيطلّع بيانات عربيتك. أرقام الشاسيه والموتور واللوحة مش بتتحفظ.</T>
+          <H>{t("ابدأ بصورة الرخصة")}</H>
+          <T color={c.muted}>{t("صوّر وش الرخصة اللي فيه الماركة والموديل والسي سي، والتطبيق هيطلّع بيانات عربيتك. أرقام الشاسيه والموتور واللوحة مش بتتحفظ.")}</T>
           <LicenceScan onDone={() => {}} />
-          <T size={13} color={c.muted}>أو اكتب البيانات بإيدك تحت.</T>
+          <T size={13} color={c.muted}>{t("أو اكتب البيانات بإيدك تحت.")}</T>
         </>
       ) : null}
 
-      <H>بيانات العربية</H>
+      <H>{t("بيانات العربية")}</H>
       <Card>
-        <Row><Field label="الماركة (إنجليزي)" value={f.make} onChangeText={set("make")} placeholder="Citroen" /><Field label="الماركة (عربي)" value={f.make_ar} onChangeText={set("make_ar")} placeholder="ستروين" /></Row>
-        <Row><Field label="الموديل" value={f.model} onChangeText={set("model")} placeholder="C3" /><Field label="سنة الصنع" keyboardType="number-pad" value={f.year} onChangeText={set("year")} /></Row>
-        <Row><Field label="الهيكل" value={f.body} onChangeText={set("body")} placeholder="هاتشباك" /><Field label="السعة (سي سي)" keyboardType="number-pad" value={f.cc} onChangeText={set("cc")} /></Row>
-        <Row><Field label="عدد السلندرات" keyboardType="number-pad" value={f.cylinders} onChangeText={set("cylinders")} /><Field label="الوقود" value={f.fuel} onChangeText={set("fuel")} placeholder="بنزين" /></Row>
-        <Field label="اللون" value={f.color} onChangeText={set("color")} />
-        <T size={13} color={c.muted}>الفتيس</T>
+        <Row><Field label={t("الماركة (إنجليزي)")} value={f.make} onChangeText={set("make")} placeholder="Citroen" />{isRTL() ? <Field label="الماركة (عربي)" value={f.make_ar} onChangeText={set("make_ar")} placeholder="ستروين" /> : null}</Row>
+        <Row><Field label={t("الموديل")} value={f.model} onChangeText={set("model")} placeholder="C3" /><Field label={t("سنة الصنع")} keyboardType="number-pad" value={f.year} onChangeText={set("year")} /></Row>
+        <Row><Field label={t("الهيكل")} value={f.body} onChangeText={set("body")} placeholder={t("هاتشباك")} /><Field label={t("السعة (سي سي)")} keyboardType="number-pad" value={f.cc} onChangeText={set("cc")} /></Row>
+        <Row><Field label={t("عدد السلندرات")} keyboardType="number-pad" value={f.cylinders} onChangeText={set("cylinders")} /><Field label={t("الوقود")} value={f.fuel} onChangeText={set("fuel")} placeholder={t("بنزين")} /></Row>
+        <Field label={t("اللون")} value={f.color} onChangeText={set("color")} />
+        <T size={13} color={c.muted}>{t("الفتيس")}</T>
         <Row>
-          <Chip label="عادي" on={trans === "manual"} onPress={() => setTrans("manual")} />
-          <Chip label="روبوت (ايزي ترونيك / سنسودرايف)" on={trans === "amt"} onPress={() => setTrans("amt")} />
-          <Chip label="أوتوماتيك" on={trans === "auto"} onPress={() => setTrans("auto")} />
+          <Chip label={t("عادي (مانيوال)")} on={trans === "manual"} onPress={() => setTrans("manual")} />
+          <Chip label={t("روبوت (ايزي ترونيك / سنسودرايف)")} on={trans === "amt"} onPress={() => setTrans("amt")} />
+          <Chip label={t("أوتوماتيك")} on={trans === "auto"} onPress={() => setTrans("auto")} />
         </Row>
-        <Row><Field label="العداد دلوقتي (كم)" keyboardType="number-pad" value={odo} onChangeText={setOdo} /><Field label="متوسط المشي في الشهر (كم)" keyboardType="number-pad" value={monthly} onChangeText={setMonthly} /></Row>
-        <Row><DateField label="تاريخ تجديد الرخصة" value={lic} onChange={setLic} /><Field label="بتغير الزيت كل (كم)" keyboardType="number-pad" value={oil} onChangeText={setOil} /></Row>
-        <Btn title="حفظ" onPress={save} disabled={!f.make.trim() && !f.make_ar.trim()} />
+        <Row><Field label={t("العداد دلوقتي (كم)")} keyboardType="number-pad" value={odo} onChangeText={setOdo} /><Field label={t("متوسط المشي في الشهر (كم)")} keyboardType="number-pad" value={monthly} onChangeText={setMonthly} /></Row>
+        <Row><DateField label={t("تاريخ تجديد الرخصة")} value={lic} onChange={setLic} /><Field label={t("بتغير الزيت كل (كم)")} keyboardType="number-pad" value={oil} onChangeText={setOil} /></Row>
+        <Btn title={t("حفظ")} onPress={save} disabled={!f.make.trim() && !f.make_ar.trim()} />
       </Card>
 
       {S.car ? (
         <>
-          <H right={<Btn small kind="soft" title={S.cache.specs ? "تحديث" : "اعرض المواصفات"} onPress={loadSpecs} busy={specBusy} />}>مواصفات العربية</H>
+          <H right={<Btn small kind="soft" title={S.cache.specs ? t("تحديث") : t("اعرض المواصفات")} onPress={loadSpecs} busy={specBusy} />}>{t("مواصفات العربية")}</H>
           {S.cache.specs ? (
             <Card>
               {S.cache.specs.rows.map((r) => <Kv key={r.k} k={r.k} v={r.v} />)}
               {S.cache.specs.note ? <T size={13} color={c.muted}>{S.cache.specs.note}</T> : null}
-              <T size={12} color={c.muted}>مواصفات استرشادية، راجع كتيب العربية للتأكيد.</T>
+              <T size={12} color={c.muted}>{t("مواصفات استرشادية، راجع كتيب العربية للتأكيد.")}</T>
             </Card>
           ) : (
-            <Card><T size={13} color={c.muted}>اضغط "اعرض المواصفات" يطلعلك كود الموتور والقوة وكمية الزيت ونوعه ومقاس الكاوتش وغيرها.</T></Card>
+            <Card><T size={13} color={c.muted}>{t("اضغط \"اعرض المواصفات\" يطلعلك كود الموتور والقوة وكمية الزيت ونوعه ومقاس الكاوتش وغيرها.")}</T></Card>
           )}
           {specErr ? <Banner status="bad">{specErr}</Banner> : null}
 
-          <H>الإشعارات</H>
+          <H>{t("الإشعارات")}</H>
           <Card>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <T style={{ flex: 1 }}>فكّرني بمواعيد الصيانة وتجديد الرخصة</T>
+              <T style={{ flex: 1 }}>{t("فكّرني بمواعيد الصيانة وتجديد الرخصة")}</T>
               <Switch value={S.notify} onValueChange={async (v) => { if (v) await ensurePermission(); update((d) => { d.notify = v; }); }} trackColor={{ true: c.petrol2, false: c.line }} />
             </View>
-            <T size={12} color={c.muted}>إشعار قبل كل بند بأسبوع ويوم المعاد، وقبل تجديد الرخصة بشهر وبأسبوع.</T>
+            <T size={12} color={c.muted}>{t("إشعار قبل كل بند بأسبوع ويوم المعاد، وقبل تجديد الرخصة بشهر وبأسبوع.")}</T>
           </Card>
         </>
       ) : null}

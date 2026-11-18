@@ -4,6 +4,7 @@ import Svg, { Circle, Ellipse, G, Line, Path, Text as SvgText } from "react-nati
 import { ZONES, Zone } from "../data/zones";
 import { Status, carName, catalogFor, due } from "../logic/due";
 import { ItemRow, ItemSheet } from "../screens/Service";
+import { t } from "../i18n";
 import { useStore } from "../store";
 import { useColors } from "../theme";
 import { Card, Chip, H, Row, Sheet, T, pillColors } from "./ui";
@@ -24,17 +25,17 @@ export default function CarSketch() {
   const { S } = useStore();
   const [zone, setZone] = useState<Zone | null>(null);
   const [item, setItem] = useState<string | null>(null);
-  const sedan = /سيدان|sedan/i.test(S.car?.body || "");
+  const sedan = /سيدان|sedan|berline|limousine|stufenheck|berlina/i.test(S.car?.body || "");
   const allowed = new Set(catalogFor(S.transmission).map((x) => x.k));
 
   const zoneItems = (z: Zone) => z.items.filter((k) => allowed.has(k)).map((k) => due(S, k));
   const zoneStatus = (z: Zone): Status => zoneItems(z).reduce<Status>((w, d) => (RANK[d.state] > RANK[w] ? d.state : w), "none");
   const dot = (s: Status) => (s === "none" ? c.petrol2 : pillColors(c, s)[1]);
-  const img = (p: string) => Linking.openURL("https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(`${p} ${carName(S)}`));
+  const img = (p: string) => Linking.openURL("https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(`${t(p)} ${carName(S)}`));
 
   return (
     <View style={{ gap: 10 }}>
-      <H>عربيتك</H>
+      <H>{t("عربيتك")}</H>
       <Card style={{ paddingHorizontal: 6 }}>
         <View style={{ direction: "ltr" }}>
           <Svg viewBox="0 0 360 172" width="100%" height={undefined} style={{ aspectRatio: 360 / 172 }}>
@@ -66,31 +67,31 @@ export default function CarSketch() {
             })}
           </Svg>
         </View>
-        <T size={12} color={c.muted} style={{ textAlign: "center" }}>دوس على أي رقم أو اسم يظهرلك مكوناته وحالة صيانته</T>
+        <T size={12} color={c.muted} style={{ textAlign: "center" }}>{t("دوس على أي رقم أو اسم يظهرلك مكوناته وحالة صيانته")}</T>
         <Row style={{ justifyContent: "center" }}>
           {ZONES.map((z, i) => {
             const s = zoneStatus(z);
-            return <Chip key={z.k} label={`${i + 1}. ${z.n}${s === "bad" ? " ●" : ""}`} onPress={() => setZone(z)} />;
+            return <Chip key={z.k} label={`${i + 1}. ${t(z.n)}${s === "bad" ? " ●" : ""}`} onPress={() => setZone(z)} />;
           })}
         </Row>
       </Card>
 
-      <Sheet visible={!!zone && !item} title={zone?.n || ""} onClose={() => setZone(null)}>
+      <Sheet visible={!!zone && !item} title={zone ? t(zone.n) : ""} onClose={() => setZone(null)}>
         {zone ? (
           <>
-            <T color={c.muted}>{zone.desc}</T>
-            <T w="semi">المكونات</T>
-            <T size={12} color={c.muted}>دوس على أي قطعة تشوف صورتها.</T>
-            <Row>{zone.parts.map((p) => <Chip key={p} label={p} onPress={() => img(p)} />)}</Row>
+            <T color={c.muted}>{t(zone.desc)}</T>
+            <T w="semi">{t("المكونات")}</T>
+            <T size={12} color={c.muted}>{t("دوس على أي قطعة تشوف صورتها.")}</T>
+            <Row>{zone.parts.map((p) => <Chip key={p} label={t(p)} onPress={() => img(p)} />)}</Row>
             {zoneItems(zone).length ? (
               <>
-                <T w="semi">الصيانة الدورية للجزء ده</T>
+                <T w="semi">{t("الصيانة الدورية للجزء ده")}</T>
                 <Card style={{ padding: 0, gap: 0, overflow: "hidden" }}>
                   {zoneItems(zone).map((d) => <ItemRow key={d.k} d={d} onPress={() => setItem(d.k)} />)}
                 </Card>
               </>
             ) : (
-              <T size={13} color={c.muted}>الجزء ده مالوش صيانة دورية بمعاد ثابت. افحصه لو حسيت بأي حاجة غريبة.</T>
+              <T size={13} color={c.muted}>{t("الجزء ده مالوش صيانة دورية بمعاد ثابت. افحصه لو حسيت بأي حاجة غريبة.")}</T>
             )}
           </>
         ) : null}

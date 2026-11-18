@@ -13,11 +13,18 @@ const cors = {
   "Access-Control-Allow-Headers": "authorization, apikey, content-type",
 };
 
-type Body = { task: string; payload: Record<string, string>; image?: string };
+type Body = { task: string; payload: Record<string, string>; image?: string; lang?: string };
 
-const SYSTEM =
-  "إنت مساعد تطبيق ICar لأصحاب العربيات في مصر. رد دايماً بالعامية المصرية، مختصر وعملي، ومن غير Markdown. " +
-  "لو مش متأكد من رقم قطعة أو معلومة ماتخترعهاش.";
+// The app sends the user's language; every text the model writes (including JSON string values) must be in it.
+const LANG_NAME: Record<string, string> = { en: "English", fr: "French", de: "German", it: "Italian" };
+function system(lang = "ar") {
+  const base =
+    "إنت مساعد تطبيق ICar لأصحاب العربيات. مختصر وعملي، ومن غير Markdown. " +
+    "لو مش متأكد من رقم قطعة أو معلومة ماتخترعهاش. الأسعار والتكلفة بالجنيه المصري لأن المستخدم في مصر.";
+  const name = LANG_NAME[lang];
+  if (!name) return base + " رد دايماً بالعامية المصرية.";
+  return base + ` IMPORTANT: The user reads ${name}. Write every answer, and every text value inside JSON (spec names, notes, reasons, tips, body type, fuel, colour), in ${name}. Keep JSON keys, part numbers and codes unchanged.`;
+}
 
 function prompt(task: string, p: Record<string, string>): { text: string; json: boolean } {
   switch (task) {
@@ -75,7 +82,7 @@ function json(status: number, body: unknown) {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   try {
-    const { task, payload, image } = (await req.json()) as Body;
+    const { task, payload, image, lang } = (await req.json()) as Body;
     const { text, json: wantJson } = prompt(task, payload || {});
     const content: Anthropic.Beta.BetaContentBlockParam[] = [];
     if (image) content.push({ type: "image", source: { type: "base64", media_type: "image/jpeg", data: image } });
@@ -84,7 +91,7 @@ Deno.serve(async (req) => {
     const msg = await client.beta.messages.create({
       model: MODEL,
       max_tokens: 16000,
-      system: SYSTEM,
+      system: system(lang),
       output_config: { effort: task === "diagnose" || task === "price" ? "medium" : "low" },
       // If a safety classifier declines, let the API retry on a fallback model in the same call.
       betas: ["server-side-fallback-2026-07-01"],

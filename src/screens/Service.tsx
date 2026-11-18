@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Linking, View } from "react-native";
 import { Due, carName, catalogFor, cfg, due, dueText, fd, fmt, statusLabel, today } from "../logic/due";
+import { t } from "../i18n";
 import { useStore } from "../store";
 import { useColors } from "../theme";
 import { Btn, Card, DateField, Field, Gauge, H, Pill, Row, Sheet, T } from "../components/ui";
@@ -12,13 +13,13 @@ export function ItemRow({ d, onPress }: { d: Due; onPress: () => void }) {
     <View style={{ flexDirection: "row", gap: 12, paddingVertical: 12, paddingHorizontal: 12, borderTopWidth: 1, borderTopColor: c.line, alignItems: "center" }}>
       <View style={{ width: 5, alignSelf: "stretch", borderRadius: 4, backgroundColor: bar }} />
       <View style={{ flex: 1, minWidth: 0 }}>
-        <T w="semi">{d.n}</T>
+        <T w="semi">{t(d.n)}</T>
         <T size={13} color={c.muted}>{dueText(d)}</T>
         {d.state !== "none" ? <Gauge frac={d.frac} status={d.state} /> : null}
       </View>
       <View style={{ alignItems: "flex-end", gap: 6 }}>
-        <Pill status={d.state} label={statusLabel[d.state]} />
-        <Btn small kind="soft" title={d.state === "none" ? "سجّل" : "اتغير"} onPress={onPress} />
+        <Pill status={d.state} label={statusLabel(d.state)} />
+        <Btn small kind="soft" title={d.state === "none" ? t("سجّل") : t("اتغير")} onPress={onPress} />
       </View>
     </View>
   );
@@ -51,7 +52,7 @@ export function ItemSheet({ k, onClose }: { k: string | null; onClose: () => voi
         x.lastDate = date; x.lastKm = odo;
         if (k === "engine_oil") { const f = (d.items.oil_filter ||= {}); f.lastDate = date; f.lastKm = odo; f.km = x.km; f.mo = x.mo; }
         if (odo != null && odo > d.odo) { d.odo = odo; d.odoDate = date; }
-        d.log.unshift({ id: Date.now().toString(36), date, km: odo, what: it.n + (k === "engine_oil" ? " + فلتر الزيت" : ""), cost, where, items: [k] });
+        d.log.unshift({ id: Date.now().toString(36), date, km: odo, what: t(it.n) + (k === "engine_oil" ? " + " + t("فلتر الزيت") : ""), cost, where, items: [k] });
         d.log.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
       }
     });
@@ -59,26 +60,26 @@ export function ItemSheet({ k, onClose }: { k: string | null; onClose: () => voi
   };
 
   return (
-    <Sheet visible title={it.n} onClose={onClose}>
-      <T size={14} color={c.muted}>{it.note}</T>
+    <Sheet visible title={t(it.n)} onClose={onClose}>
+      <T size={14} color={c.muted}>{t(it.note)}</T>
       <Row>
-        <DateField label="اتغير بتاريخ" value={date} onChange={setDate} />
-        <Field label="العداد وقتها (كم)" keyboardType="number-pad" value={km} onChangeText={setKm} />
+        <DateField label={t("اتغير بتاريخ")} value={date} onChange={setDate} />
+        <Field label={t("العداد وقتها (كم)")} keyboardType="number-pad" value={km} onChangeText={setKm} />
       </Row>
       <Row>
-        <Field label="التكلفة (ج.م)" keyboardType="number-pad" value={cost} onChangeText={setCost} />
-        <Field label="المكان / الميكانيكي" value={where} onChangeText={setWhere} />
+        <Field label={t("التكلفة (ج.م)")} keyboardType="number-pad" value={cost} onChangeText={setCost} />
+        <Field label={t("المكان / الميكانيكي")} value={where} onChangeText={setWhere} />
       </Row>
       <Row>
-        <Field label="يتغير كل (كم)" keyboardType="number-pad" value={ikm} onChangeText={setIkm} placeholder="بالوقت بس" />
-        <Field label="أو كل (شهر)" keyboardType="number-pad" value={imo} onChangeText={setImo} />
+        <Field label={t("يتغير كل (كم)")} keyboardType="number-pad" value={ikm} onChangeText={setIkm} placeholder={t("بالوقت بس")} />
+        <Field label={t("أو كل (شهر)")} keyboardType="number-pad" value={imo} onChangeText={setImo} />
       </Row>
       <Row>
-        <Btn title="سجّل التغيير" onPress={() => save(true)} />
-        <Btn kind="soft" title="احفظ الفترة بس" onPress={() => save(false)} />
+        <Btn title={t("سجّل التغيير")} onPress={() => save(true)} />
+        <Btn kind="soft" title={t("احفظ الفترة بس")} onPress={() => save(false)} />
       </Row>
       {it.lastDate || it.lastKm != null ? (
-        <T size={13} color={c.muted}>آخر تغيير متسجل: {fd(it.lastDate)} {it.lastKm != null ? `عند ${fmt(it.lastKm)} كم` : ""}</T>
+        <T size={13} color={c.muted}>{t("آخر تغيير متسجل: {d}", { d: fd(it.lastDate) })} {it.lastKm != null ? t("عند {n} كم", { n: fmt(it.lastKm) }) : ""}</T>
       ) : null}
     </Sheet>
   );
@@ -92,15 +93,15 @@ export default function Service() {
   const ds = catalogFor(S.transmission).map((x) => due(S, x.k)).sort((a, b) => order[a.state] - order[b.state] || (a.when || "").localeCompare(b.when || ""));
   return (
     <View style={{ gap: 12 }}>
-      <H>بنود الصيانة الدورية</H>
+      <H>{t("بنود الصيانة الدورية")}</H>
       <T size={13} color={c.muted}>
-        المعاد بيتحسب بالكيلو أو بالوقت، أيهما أقرب، على جدول "الاستخدام الشاق" بتاع المصنع لأنه المناسب لحر وتراب وزحمة مصر. التطبيق هيبعتلك إشعار قبل كل معاد بأسبوع ويوم المعاد نفسه.
+        {t("المعاد بيتحسب بالكيلو أو بالوقت، أيهما أقرب، على جدول \"الاستخدام الشاق\" بتاع المصنع لأنه المناسب لحر وتراب وزحمة مصر. التطبيق هيبعتلك إشعار قبل كل معاد بأسبوع ويوم المعاد نفسه.")}
       </T>
       <Card style={{ padding: 0, gap: 0, overflow: "hidden" }}>
         {ds.map((d) => <ItemRow key={d.k} d={d} onPress={() => setOpen(d.k)} />)}
       </Card>
-      <T size={13} color={c.muted}>متوسط مشيك في الشهر: {fmt(S.monthlyKm)} كم. ده بيتعدل لوحده لما تحدّث العداد.</T>
-      <Btn kind="soft" small title={`صور قطع ${carName(S)}`} onPress={() => Linking.openURL("https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(carName(S) + " قطع غيار"))} />
+      <T size={13} color={c.muted}>{t("متوسط مشيك في الشهر: {n} كم. ده بيتعدل لوحده لما تحدّث العداد.", { n: fmt(S.monthlyKm) })}</T>
+      <Btn kind="soft" small title={t("صور قطع {car}", { car: carName(S) })} onPress={() => Linking.openURL("https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(carName(S) + " " + t("قطع غيار")))} />
       <ItemSheet k={open} onClose={() => setOpen(null)} />
     </View>
   );

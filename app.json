@@ -29,7 +29,7 @@
     "plugins": [
       "expo-font",
       "@react-native-community/datetimepicker",
-      ["expo-localization", { "supportsRTL": true, "forcesRTL": true }],
+      ["expo-localization", { "supportsRTL": true }],
       ["expo-notifications", { "color": "#FF7A45" }],
       ["expo-image-picker", {
         "cameraPermission": "ICar بيستخدم الكاميرا علشان تصوّر رخصة العربية ويطلع بياناتها.",

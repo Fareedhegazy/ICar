@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { View } from "react-native";
-import { catalogFor, fmt, parseISO, today } from "../logic/due";
+import { t } from "../i18n";
+import { catalogFor, fmonth, fmt, parseISO, today } from "../logic/due";
 import { useStore } from "../store";
 import { useColors } from "../theme";
 import { Btn, Card, Chip, DateField, Field, H, Row, Sheet, T } from "../components/ui";
 
-const MONTH = new Intl.DateTimeFormat("ar-EG", { month: "short" });
 
 export default function Log() {
   const c = useColors();
@@ -27,7 +27,7 @@ export default function Log() {
     update((d) => {
       ks.forEach((k) => { const x = (d.items[k] ||= {}); x.lastDate = date; x.lastKm = odo; });
       if (odo != null && odo > d.odo) { d.odo = odo; d.odoDate = date; }
-      const names = catalogFor(d.transmission).filter((x) => ks.includes(x.k)).map((x) => x.n).join(" + ");
+      const names = catalogFor(d.transmission).filter((x) => ks.includes(x.k)).map((x) => t(x.n)).join(" + ");
       d.log.push({ id: Date.now().toString(36), date, km: odo, what: what.trim() || names, cost, where, note, items: ks });
       d.log.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
     });
@@ -42,7 +42,7 @@ export default function Log() {
 
   return (
     <View style={{ gap: 12 }}>
-      <H right={<Btn small title="+ صيانة جديدة" onPress={start} />}>سجل الصيانة</H>
+      <H right={<Btn small title={t("+ صيانة جديدة")} onPress={start} />}>{t("سجل الصيانة")}</H>
       {S.log.length ? (
         <Card style={{ padding: 0, gap: 0, overflow: "hidden" }}>
           {S.log.map((l) => {
@@ -50,44 +50,44 @@ export default function Log() {
             return (
               <View key={l.id} style={{ flexDirection: "row", gap: 12, padding: 12, borderTopWidth: 1, borderTopColor: c.line, alignItems: "flex-start" }}>
                 <View style={{ backgroundColor: c.sunk, borderRadius: 10, paddingHorizontal: 8, paddingVertical: 4, alignItems: "center", minWidth: 54 }}>
-                  {d ? (<><T w="bold" size={18}>{d.getDate()}</T><T size={11}>{MONTH.format(d)} {d.getFullYear()}</T></>) : <T>—</T>}
+                  {d ? (<><T w="bold" size={18}>{d.getDate()}</T><T size={11}>{fmonth(d)} {d.getFullYear()}</T></>) : <T>—</T>}
                 </View>
                 <View style={{ flex: 1, minWidth: 0 }}>
                   <T w="semi">{l.what}</T>
-                  <T size={13} color={c.muted}>{[l.km != null ? `عند ${fmt(l.km)} كم` : "", l.where].filter(Boolean).join(" · ")}</T>
+                  <T size={13} color={c.muted}>{[l.km != null ? t("عند {n} كم", { n: fmt(l.km) }) : "", l.where].filter(Boolean).join(" · ")}</T>
                   {l.note ? <T size={13} color={c.muted}>{l.note}</T> : null}
                 </View>
                 <View style={{ alignItems: "flex-end", gap: 4 }}>
-                  {l.cost ? <T w="semi">{fmt(l.cost)} ج.م</T> : null}
-                  <Btn small kind="soft" title={armed === l.id ? "متأكد؟" : "مسح"} onPress={() => del(l.id)} />
+                  {l.cost ? <T w="semi">{t("{n} ج.م", { n: fmt(l.cost) })}</T> : null}
+                  <Btn small kind="soft" title={armed === l.id ? t("متأكد؟") : t("مسح")} onPress={() => del(l.id)} />
                 </View>
               </View>
             );
           })}
         </Card>
       ) : (
-        <Card><T color={c.muted}>لسه مفيش صيانات. أول ما تسجل تغيير بند من صفحة الصيانة هيظهر هنا، أو ضيف صيانة حرة (كهربا، سمكرة، إصلاح).</T></Card>
+        <Card><T color={c.muted}>{t("لسه مفيش صيانات. أول ما تسجل تغيير بند من صفحة الصيانة هيظهر هنا، أو ضيف صيانة حرة (كهربا، سمكرة، إصلاح).")}</T></Card>
       )}
-      {S.log.length ? <T size={13} color={c.muted}>الإجمالي: {fmt(total)} ج.م</T> : null}
+      {S.log.length ? <T size={13} color={c.muted}>{t("الإجمالي: {n} ج.م", { n: fmt(total) })}</T> : null}
 
-      <Sheet visible={open} title="صيانة جديدة" onClose={() => setOpen(false)}>
+      <Sheet visible={open} title={t("صيانة جديدة")} onClose={() => setOpen(false)}>
         <Row>
-          <DateField label="التاريخ" value={date} onChange={setDate} />
-          <Field label="العداد (كم)" keyboardType="number-pad" value={km} onChangeText={setKm} />
+          <DateField label={t("التاريخ")} value={date} onChange={setDate} />
+          <Field label={t("العداد (كم)")} keyboardType="number-pad" value={km} onChangeText={setKm} />
         </Row>
-        <Field label="إيه اللي اتعمل" value={what} onChangeText={setWhat} placeholder="مثال: تغيير مساعدين أمامي" />
+        <Field label={t("إيه اللي اتعمل")} value={what} onChangeText={setWhat} placeholder={t("مثال: تغيير مساعدين أمامي")} />
         <Row>
-          <Field label="التكلفة (ج.م)" keyboardType="number-pad" value={cost} onChangeText={setCost} />
-          <Field label="المكان" value={where} onChangeText={setWhere} />
+          <Field label={t("التكلفة (ج.م)")} keyboardType="number-pad" value={cost} onChangeText={setCost} />
+          <Field label={t("المكان")} value={where} onChangeText={setWhere} />
         </Row>
-        <Field label="ملاحظات" multiline value={note} onChangeText={setNote} />
-        <T size={13} color={c.muted}>لو ده بند من الصيانة الدورية علّمه علشان يتحسب ميعاده الجاي:</T>
+        <Field label={t("ملاحظات")} multiline value={note} onChangeText={setNote} />
+        <T size={13} color={c.muted}>{t("لو ده بند من الصيانة الدورية علّمه علشان يتحسب ميعاده الجاي:")}</T>
         <Row>
           {catalogFor(S.transmission).map((x) => (
-            <Chip key={x.k} label={x.n} on={ks.includes(x.k)} onPress={() => setKs((p) => (p.includes(x.k) ? p.filter((y) => y !== x.k) : [...p, x.k]))} />
+            <Chip key={x.k} label={t(x.n)} on={ks.includes(x.k)} onPress={() => setKs((p) => (p.includes(x.k) ? p.filter((y) => y !== x.k) : [...p, x.k]))} />
           ))}
         </Row>
-        <Btn title="حفظ" onPress={save} disabled={!what.trim() && !ks.length} />
+        <Btn title={t("حفظ")} onPress={save} disabled={!what.trim() && !ks.length} />
       </Sheet>
     </View>
   );

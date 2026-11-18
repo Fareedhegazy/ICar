@@ -1,4 +1,5 @@
 import { CATALOG, CatalogItem, Transmission } from "../data/catalog";
+import { Lang, deviceLang, getLang, locale, t } from "../i18n";
 
 export type ItemState = { km?: number; mo?: number; lastKm?: number | null; lastDate?: string | null };
 export type LogEntry = { id: string; date: string; km: number | null; what: string; cost?: string; where?: string; note?: string; items: string[] };
@@ -15,10 +16,11 @@ export type AppState = {
   log: LogEntry[];
   cache: { specs?: { rows: { k: string; v: string }[]; note?: string }; parts?: Record<string, PartInfo>; price?: { low: number; high: number; why?: string; tips?: string; at: string } };
   notify: boolean;
+  lang: Lang;
 };
 
 export const blankState = (): AppState => ({
-  car: null, odo: 0, odoDate: null, monthlyKm: 1500, transmission: "manual", licenceDue: "", items: {}, log: [], cache: {}, notify: true,
+  car: null, odo: 0, odoDate: null, monthlyKm: 1500, transmission: "manual", licenceDue: "", items: {}, log: [], cache: {}, notify: true, lang: deviceLang(),
 });
 
 export type Status = "ok" | "warn" | "bad" | "none";
@@ -37,9 +39,11 @@ export const addMonths = (s: string, m: number) => { const x = parseISO(s); x.se
 export const addDays = (s: string, n: number) => { const x = parseISO(s); x.setDate(x.getDate() + n); return toISO(x); };
 export const daysBetween = (a: string, b: string) => Math.round((parseISO(b).getTime() - parseISO(a).getTime()) / 864e5);
 
-const DF = new Intl.DateTimeFormat("ar-EG-u-nu-latn", { day: "numeric", month: "long", year: "numeric" });
-export const fd = (s?: string | null) => (s ? DF.format(parseISO(s)) : "");
-export const fmt = (n: number | string | null | undefined) => Number(n || 0).toLocaleString("en-US");
+const DFS: Record<string, Intl.DateTimeFormat> = {};
+const df = (opts: Intl.DateTimeFormatOptions, key: string) => (DFS[getLang() + key] ||= new Intl.DateTimeFormat(locale(), opts));
+export const fd = (s?: string | null) => (s ? df({ day: "numeric", month: "long", year: "numeric" }, "long").format(parseISO(s)) : "");
+export const fmonth = (d: Date) => df({ month: "short" }, "mon").format(d);
+export const fmt = (n: number | string | null | undefined) => Number(n || 0).toLocaleString(getLang() === "ar" ? "en-US" : locale());
 
 export function catalogFor(t: Transmission) {
   return CATALOG.filter((x) => !x.trans || ([] as Transmission[]).concat(x.trans).includes(t));
@@ -77,21 +81,24 @@ export function due(S: AppState, k: string): Due {
 }
 
 export function dueText(d: Due) {
-  if (d.state === "none") return "سجّل آخر مرة اتغير فيها علشان أحسبلك المعاد";
+  if (d.state === "none") return t("سجّل آخر مرة اتغير فيها علشان أحسبلك المعاد");
   const parts: string[] = [];
-  if (d.byKm != null && d.remKm != null) parts.push(d.remKm <= 0 ? `فات ميعاده بـ ${fmt(-d.remKm)} كم` : `باقي ${fmt(d.remKm)} كم (عند ${fmt(d.byKm)})`);
-  if (d.byDate) parts.push((d.daysLeft ?? 1) <= 0 && (d.byKm == null || (d.remKm ?? 1) > 0) ? `ميعاده عدى ${fd(d.byDate)}` : `أو قبل ${fd(d.byDate)}`);
+  if (d.byKm != null && d.remKm != null) parts.push(d.remKm <= 0 ? t("فات ميعاده بـ {n} كم", { n: fmt(-d.remKm) }) : t("باقي {n} كم (عند {at})", { n: fmt(d.remKm), at: fmt(d.byKm) }));
+  if (d.byDate) parts.push((d.daysLeft ?? 1) <= 0 && (d.byKm == null || (d.remKm ?? 1) > 0) ? t("ميعاده عدى {d}", { d: fd(d.byDate) }) : t("أو قبل {d}", { d: fd(d.byDate) }));
   return parts.join(" · ");
 }
 
-export const statusLabel: Record<Status, string> = { ok: "تمام", warn: "قرّب", bad: "متأخر", none: "مش متسجل" };
+const STATUS: Record<Status, string> = { ok: "تمام", warn: "قرّب", bad: "متأخر", none: "مش متسجل" };
+export const statusLabel = (s: Status) => t(STATUS[s]);
 
 export function carName(S: AppState) {
   const c = S.car;
-  return c ? [c.make_ar || c.make, c.model, c.year].filter(Boolean).join(" ") : "عربيتي";
+  const make = getLang() === "ar" ? c?.make_ar || c?.make : c?.make || c?.make_ar;
+  return c ? [make, c.model, c.year].filter(Boolean).join(" ") : t("عربيتي");
 }
+/** Car description sent to the AI server. Kept in English so it reads the same whatever the UI language. */
 export function carContext(S: AppState) {
   const c = S.car || ({} as Car);
-  const t = S.transmission === "auto" ? "أوتوماتيك" : S.transmission === "amt" ? "روبوت نص أوتوماتيك (Easytronic/SensoDrive)" : "عادي";
-  return `${c.make || ""} ${c.model || ""} ${c.body || ""} موديل ${c.year || ""}، موتور ${c.cc || ""} سي سي ${c.cylinders || ""} سلندر ${c.fuel || ""}، فتيس ${t}، العداد ${S.odo} كم، في مصر`;
+  const tr = S.transmission === "auto" ? "automatic" : S.transmission === "amt" ? "robotised manual (Easytronic/SensoDrive)" : "manual";
+  return `${c.make || c.make_ar || ""} ${c.model || ""} ${c.body || ""}, year ${c.year || ""}, engine ${c.cc || ""} cc ${c.cylinders || ""} cyl ${c.fuel || ""}, ${tr} gearbox, odometer ${S.odo} km, used in Egypt`;
 }
