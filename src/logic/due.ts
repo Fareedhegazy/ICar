@@ -22,10 +22,12 @@ export type AppState = {
   countryConfirmed: boolean;
   /** Premium until this date (ISO). Set by the free trial now, by store purchases later. */
   premium?: { until?: string; trialUsed?: boolean };
+  /** True once the first-launch walkthrough was seen or skipped. */
+  onboarded: boolean;
 };
 
 export const blankState = (): AppState => ({
-  car: null, odo: 0, odoDate: null, monthlyKm: 1500, transmission: "manual", licenceDue: "", items: {}, log: [], cache: {}, notify: true, lang: deviceLang(), country: deviceCountry(), countryConfirmed: false,
+  car: null, odo: 0, odoDate: null, monthlyKm: 1500, transmission: "manual", licenceDue: "", items: {}, log: [], cache: {}, notify: true, lang: deviceLang(), country: deviceCountry(), countryConfirmed: false, onboarded: false,
 });
 
 export type Status = "ok" | "warn" | "bad" | "none";

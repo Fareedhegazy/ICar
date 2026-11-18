@@ -416,5 +416,17 @@ const d: Record<string, string> = {
   "اعرض محلك هنا قدام أصحاب العربيات اللي حواليك.": "Zeig dein Geschäft hier den Autobesitzern in deiner Nähe.",
   "أعلن معانا": "Bei uns werben",
   "الإعلانات هتبدأ قريب.": "Einträge starten bald.",
+  "صوّر الرخصة وخلاص": "Einfach den Fahrzeugschein fotografieren",
+  "التطبيق بيطلّع بيانات عربيتك ومواصفاتها لوحده. أو اكتبها بإيدك في دقيقة.": "Die App trägt Daten und technische Werte deines Autos selbst ein. Oder tipp sie in einer Minute ein.",
+  "كل الصيانة في مكان واحد": "Die ganze Wartung an einem Ort",
+  "سجّل آخر مرة غيرت فيها كل حاجة، والتطبيق يحسب المعاد الجاي ويفكّرك قبلها بأسبوع.": "Trag ein, wann du jedes Teil zuletzt gewechselt hast. Die App berechnet den nächsten Termin und erinnert dich eine Woche vorher.",
+  "لمبة نورت؟ صوت غريب؟": "Warnleuchte an? Komisches Geräusch?",
+  "اعرف معنى لمبات التابلوه وأكواد الأعطال، واوصف العَرَض يطلعلك الأسباب المحتملة.": "Erfahre, was Warnleuchten und Fehlercodes bedeuten, und beschreib ein Symptom, um die wahrscheinlichen Ursachen zu sehen.",
+  "قطع الغيار والسعر": "Teile und Preis",
+  "أرقام القطع الأصلية والبدائل، أقرب محلات ليك، وسعر عربيتك في السوق.": "Original- und Alternativnummern, die nächsten Geschäfte und der Marktwert deines Autos.",
+  "تخطّي": "Überspringen",
+  "يلا نبدأ": "Los geht's",
+  "التالي": "Weiter",
+  "شوف شرح التطبيق تاني": "App-Einführung erneut ansehen",
 };
 export default d;

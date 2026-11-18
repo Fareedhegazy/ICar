@@ -119,6 +119,7 @@ export default function CarScreen({ go }: { go: (tab: string) => void }) {
         {!S.countryConfirmed ? <T size={12} color={c.muted}>{t("حددناها من إعدادات موبايلك. أكّدها أو غيّرها علشان العملة والأسعار ومواقع الإعلانات تبقى مظبوطة.")}</T> : null}
       </Card>
       <PremiumCard />
+      <Btn kind="soft" small title={t("شوف شرح التطبيق تاني")} onPress={() => update((d) => { d.onboarded = false; })} />
       <Sheet visible={pickCountry} title={t("اختار دولتك")} onClose={() => setPickCountry(false)}>
         <Row>{COUNTRIES.map((x) => <Chip key={x.k} label={countryName(x, S.lang)} on={S.country === x.k} onPress={() => setCountryTo(x.k)} />)}</Row>
       </Sheet>
