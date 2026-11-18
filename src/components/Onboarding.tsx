@@ -24,10 +24,11 @@ function IntroVideo({ src }: { src: number }) {
 export function Onboarding({ visible, onDone }: { visible: boolean; onDone: () => void }) {
   const c = useColors();
   const video = introVideoFor(getLang());
-  const steps = (video != null ? 1 : 0) + SLIDES.length;
+  // The video already walks through the app and ends on "Let's start", so when it exists it replaces the slides.
+  const steps = video != null ? 1 : SLIDES.length;
   const [i, setI] = useState(0);
   const isVideo = video != null && i === 0;
-  const s = SLIDES[i - (video != null ? 1 : 0)];
+  const s = video != null ? undefined : SLIDES[i];
   const finish = () => { setI(0); onDone(); };
   const last = i === steps - 1;
 
@@ -36,7 +37,7 @@ export function Onboarding({ visible, onDone }: { visible: boolean; onDone: () =
       <SafeAreaView style={{ flex: 1, backgroundColor: c.petrol }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: 16 }}>
           <T w="bold" size={15} color={c.petrolInk} style={{ letterSpacing: 1.5, writingDirection: "ltr" }}>I<T w="bold" size={15} color={c.accent}>CAR</T></T>
-          {!last ? (
+          {!last || isVideo ? (
             <Pressable onPress={finish} hitSlop={10} style={{ borderWidth: 1, borderColor: "rgba(255,255,255,0.5)", borderRadius: 9, paddingHorizontal: 12, paddingVertical: 6 }}>
               <T w="semi" size={13} color={c.petrolInk}>{t("تخطّي")}</T>
             </Pressable>
@@ -56,11 +57,11 @@ export function Onboarding({ visible, onDone }: { visible: boolean; onDone: () =
           ) : null}
         </View>
         <View style={{ padding: 24, gap: 16 }}>
-          <View style={{ flexDirection: "row", justifyContent: "center", gap: 6 }}>
+          {steps > 1 ? <View style={{ flexDirection: "row", justifyContent: "center", gap: 6 }}>
             {Array.from({ length: steps }).map((_, k) => (
               <View key={k} style={{ width: k === i ? 22 : 8, height: 8, borderRadius: 4, backgroundColor: k === i ? c.accent : "rgba(255,255,255,0.35)" }} />
             ))}
-          </View>
+          </View> : null}
           <Btn title={last ? t("يلا نبدأ") : t("التالي")} onPress={() => (last ? finish() : setI(i + 1))} />
         </View>
       </SafeAreaView>
