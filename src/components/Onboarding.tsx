@@ -4,8 +4,8 @@ import { useVideoPlayer, VideoView } from "expo-video";
 import React, { useState } from "react";
 import { Modal, Pressable, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { INTRO_VIDEO } from "../data/intro";
-import { t } from "../i18n";
+import { introVideoFor } from "../data/intro";
+import { getLang, t } from "../i18n";
 import { useColors } from "../theme";
 import { Btn, T } from "./ui";
 
@@ -23,10 +23,11 @@ function IntroVideo({ src }: { src: number }) {
 
 export function Onboarding({ visible, onDone }: { visible: boolean; onDone: () => void }) {
   const c = useColors();
-  const steps = (INTRO_VIDEO != null ? 1 : 0) + SLIDES.length;
+  const video = introVideoFor(getLang());
+  const steps = (video != null ? 1 : 0) + SLIDES.length;
   const [i, setI] = useState(0);
-  const isVideo = INTRO_VIDEO != null && i === 0;
-  const s = SLIDES[i - (INTRO_VIDEO != null ? 1 : 0)];
+  const isVideo = video != null && i === 0;
+  const s = SLIDES[i - (video != null ? 1 : 0)];
   const finish = () => { setI(0); onDone(); };
   const last = i === steps - 1;
 
@@ -43,7 +44,7 @@ export function Onboarding({ visible, onDone }: { visible: boolean; onDone: () =
         </View>
         <View style={{ flex: 1, padding: 24, justifyContent: "center", alignItems: "center", gap: 18 }}>
           {isVideo ? (
-            <IntroVideo src={INTRO_VIDEO as number} />
+            <IntroVideo key={video} src={video as number} />
           ) : s ? (
             <>
               <View style={{ width: 120, height: 120, borderRadius: 60, backgroundColor: "rgba(255,255,255,0.12)", alignItems: "center", justifyContent: "center" }}>
