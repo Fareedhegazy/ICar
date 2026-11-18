@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { Linking, Platform, Pressable, View } from "react-native";
 import { aiErrorText, askAI } from "../ai";
 import { PARTS } from "../data/catalog";
+import { getCountry } from "../data/countries";
+import { ADVERTISE_URL, FEATURED } from "../data/shops";
 import { PartInfo, carContext } from "../logic/due";
 import { isRTL, t } from "../i18n";
 import { useStore } from "../store";
@@ -44,8 +46,24 @@ export default function Parts() {
     setBusy(null);
   };
 
+  const country = getCountry().k;
+  const featured = FEATURED.filter((s) => s.country === country && (!s.makes || s.makes.includes(mk.toLowerCase())));
+
   return (
     <View style={{ gap: 12 }}>
+      {featured.map((s) => (
+        <Card key={s.name} style={{ borderColor: c.accent }}>
+          <Row style={{ justifyContent: "space-between" }}>
+            <T w="bold" style={{ flex: 1 }}>{s.name}</T>
+            <T size={11} color={c.accent}>{t("محل مميز")}</T>
+          </Row>
+          {s.city || s.note ? <T size={13} color={c.muted}>{[s.city, s.note].filter(Boolean).join(" · ")}</T> : null}
+          <Row>
+            {s.phone ? <Btn small title={t("اتصل")} onPress={() => Linking.openURL("tel:" + s.phone)} /> : null}
+            {s.maps ? <Btn small kind="soft" title={t("الموقع")} onPress={() => Linking.openURL(s.maps!)} /> : null}
+          </Row>
+        </Card>
+      ))}
       <H>{t("أقرب محلات ليك")}</H>
       <Card>
         <Row>
@@ -56,6 +74,11 @@ export default function Parts() {
           <Btn kind="soft" title={t("ونش")} onPress={() => maps(t("ونش إنقاذ"))} />
         </Row>
         <T size={12} color={c.muted}>{t("بيفتح الخرايط على موقعك. شوف التقييمات وكلم المحل قبل ما تروح.")}</T>
+      </Card>
+      <Card style={{ backgroundColor: c.sunk }}>
+        <T w="semi">{t("عندك محل قطع غيار أو مركز صيانة؟")}</T>
+        <T size={13} color={c.muted}>{t("اعرض محلك هنا قدام أصحاب العربيات اللي حواليك.")}</T>
+        {ADVERTISE_URL ? <Btn small title={t("أعلن معانا")} onPress={() => Linking.openURL(ADVERTISE_URL)} /> : <T size={12} color={c.muted}>{t("الإعلانات هتبدأ قريب.")}</T>}
       </Card>
 
       <H>{t("قطع الغيار بالرقم")}</H>

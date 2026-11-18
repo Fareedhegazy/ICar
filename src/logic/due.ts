@@ -20,6 +20,8 @@ export type AppState = {
   lang: Lang;
   country: string;
   countryConfirmed: boolean;
+  /** Premium until this date (ISO). Set by the free trial now, by store purchases later. */
+  premium?: { until?: string; trialUsed?: boolean };
 };
 
 export const blankState = (): AppState => ({

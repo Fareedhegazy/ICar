@@ -12,6 +12,7 @@ import { useStore } from "../store";
 import { useColors } from "../theme";
 import { Banner, Btn, Card, Chip, DateField, Field, H, Row, Sheet, T } from "../components/ui";
 import { Kv } from "./Home";
+import { PremiumCard, usePremium } from "../components/Premium";
 
 type Extract = Partial<CarT> & { inspection_year?: number | null; licence_expiry?: string | null };
 
@@ -19,11 +20,13 @@ type Extract = Partial<CarT> & { inspection_year?: number | null; licence_expiry
 export function LicenceScan({ onDone }: { onDone: () => void }) {
   const c = useColors();
   const { update } = useStore();
+  const { requirePro } = usePremium();
   const [uri, setUri] = useState<string | null>(null);
   const [msg, setMsg] = useState(t("صورة واضحة، من غير انعكاس نور"));
   const [busy, setBusy] = useState(false);
 
   const run = async (camera: boolean) => {
+    if (!requirePro()) return;
     const opts: ImagePicker.ImagePickerOptions = { mediaTypes: ["images"], quality: 1 };
     let res: ImagePicker.ImagePickerResult;
     if (camera) {
@@ -115,6 +118,7 @@ export default function CarScreen({ go }: { go: (tab: string) => void }) {
         </Row>
         {!S.countryConfirmed ? <T size={12} color={c.muted}>{t("حددناها من إعدادات موبايلك. أكّدها أو غيّرها علشان العملة والأسعار ومواقع الإعلانات تبقى مظبوطة.")}</T> : null}
       </Card>
+      <PremiumCard />
       <Sheet visible={pickCountry} title={t("اختار دولتك")} onClose={() => setPickCountry(false)}>
         <Row>{COUNTRIES.map((x) => <Chip key={x.k} label={countryName(x, S.lang)} on={S.country === x.k} onPress={() => setCountryTo(x.k)} />)}</Row>
       </Sheet>

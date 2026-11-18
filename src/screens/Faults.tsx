@@ -4,6 +4,7 @@ import { aiErrorText, askAI } from "../ai";
 import { LIGHTS, OBD, WarningLight } from "../data/catalog";
 import { carContext } from "../logic/due";
 import { t } from "../i18n";
+import { usePremium } from "../components/Premium";
 import { useStore } from "../store";
 import { useColors } from "../theme";
 import { Btn, Card, Chip, Field, H, Pill, Row, Sheet, T } from "../components/ui";
@@ -20,6 +21,7 @@ export default function Faults() {
   const [sym, setSym] = useState("");
   const [diag, setDiag] = useState("");
   const [busy, setBusy] = useState(false);
+  const { requirePro } = usePremium();
 
   const lookCode = async () => {
     const k = code.trim().toUpperCase();
@@ -31,7 +33,7 @@ export default function Faults() {
     setCodeBusy(false);
   };
   const diagnose = async () => {
-    if (!sym.trim()) return;
+    if (!sym.trim() || !requirePro()) return;
     setBusy(true); setDiag("");
     const recent = S.log.slice(0, 8).map((l) => `${l.date}: ${l.what}`).join("; ");
     try { const r = await askAI("diagnose", { symptom: sym, car: carContext(S), recent }); setDiag(r.text); }

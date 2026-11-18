@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { View } from "react-native";
+import { Share, View } from "react-native";
+import { usePremium } from "../components/Premium";
 import { t } from "../i18n";
-import { catalogFor, cur, fmonth, fmt, money, parseISO, today } from "../logic/due";
+import { carName, catalogFor, cur, fd, fmonth, fmt, money, parseISO, today } from "../logic/due";
 import { useStore } from "../store";
 import { useColors } from "../theme";
 import { Btn, Card, Chip, DateField, Field, H, Row, Sheet, T } from "../components/ui";
@@ -39,6 +40,13 @@ export default function Log() {
     setArmed(null);
   };
   const total = S.log.reduce((a, l) => a + (Number(l.cost) || 0), 0);
+  const { requirePro } = usePremium();
+  /** Premium: share the whole log as text (WhatsApp, email, notes...). */
+  const exportLog = () => {
+    if (!requirePro()) return;
+    const lines = S.log.map((l) => [fd(l.date), l.what, l.km != null ? t("عند {n} كم", { n: fmt(l.km) }) : "", l.cost ? money(l.cost) : "", l.where].filter(Boolean).join(" · "));
+    Share.share({ message: `ICar · ${t("سجل الصيانة")} · ${carName(S)}\n\n${lines.join("\n")}\n\n${t("الإجمالي: {n}", { n: money(total) })}` }).catch(() => {});
+  };
 
   return (
     <View style={{ gap: 12 }}>
@@ -68,7 +76,12 @@ export default function Log() {
       ) : (
         <Card><T color={c.muted}>{t("لسه مفيش صيانات. أول ما تسجل تغيير بند من صفحة الصيانة هيظهر هنا، أو ضيف صيانة حرة (كهربا، سمكرة، إصلاح).")}</T></Card>
       )}
-      {S.log.length ? <T size={13} color={c.muted}>{t("الإجمالي: {n}", { n: money(total) })}</T> : null}
+      {S.log.length ? (
+        <Row style={{ justifyContent: "space-between" }}>
+          <T size={13} color={c.muted}>{t("الإجمالي: {n}", { n: money(total) })}</T>
+          <Btn small kind="soft" title={t("تصدير السجل")} onPress={exportLog} />
+        </Row>
+      ) : null}
 
       <Sheet visible={open} title={t("صيانة جديدة")} onClose={() => setOpen(false)}>
         <Row>

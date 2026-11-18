@@ -10,6 +10,7 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, I18nManager, Platform, Pressable, ScrollView, View } from "react-native";
 import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Cluster } from "./src/components/Cluster";
+import { PremiumProvider } from "./src/components/Premium";
 import { Banner, T } from "./src/components/ui";
 import { isRTL, t } from "./src/i18n";
 import CarScreen from "./src/screens/Car";
@@ -83,7 +84,9 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <StoreProvider>
-        <Shell />
+        <PremiumProvider>
+          <Shell />
+        </PremiumProvider>
       </StoreProvider>
     </SafeAreaProvider>
   );
