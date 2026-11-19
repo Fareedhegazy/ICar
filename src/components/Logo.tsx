@@ -1,33 +1,13 @@
-// ICar logo mark: a "C" drawn as a gauge around an "i". Same artwork as /assets/icon.png.
+// ICar logo: the "C" is drawn as a gauge around an "i", followed by "ar". Same artwork as /assets/icon.png.
 import React from "react";
-import Svg, { Circle, Path, Rect } from "react-native-svg";
+import { SvgXml } from "react-native-svg";
 
-const TICKS = [
-  { d: "M610 682L630 716", w: 16, o: 0.95 },
-  { d: "M548 719L553 744", w: 10, o: 0.6 },
-  { d: "M476 719L471 744", w: 10, o: 0.6 },
-  { d: "M414 682L394 716", w: 16, o: 0.95 },
-  { d: "M351 647L331 664", w: 10, o: 0.6 },
-  { d: "M315 584L290 593", w: 10, o: 0.6 },
-  { d: "M316 512L276 512", w: 16, o: 0.95 },
-  { d: "M315 440L290 431", w: 10, o: 0.6 },
-  { d: "M351 377L331 360", w: 10, o: 0.6 },
-  { d: "M414 342L394 308", w: 16, o: 0.95 },
-  { d: "M476 305L471 280", w: 10, o: 0.6 },
-  { d: "M548 305L553 280", w: 10, o: 0.6 },
-  { d: "M610 342L630 308", w: 16, o: 0.95 },
-];
-const ORANGE = "#F47B35";
+const XML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="156 293 713 438"><g transform="translate(374.34999999999997 512) scale(0.6) translate(-512 -512)"><path d="M734.9 712.7 A300 300 0 1 1 734.9 311.3" fill="none" stroke="__FG__" stroke-width="116" stroke-linecap="round"/>
+<path d="M734.9 712.7 A300 300 0 0 1 553.8 809.1" fill="none" stroke="#F47B35" stroke-width="116"/>
+<circle cx="734.9" cy="712.7" r="58" fill="#F47B35"/>
+<line x1="610.0" y1="681.7" x2="630.0" y2="716.4" stroke="__FG__" stroke-width="16" stroke-linecap="round" opacity="0.95"/><line x1="548.5" y1="718.8" x2="553.0" y2="744.4" stroke="__FG__" stroke-width="10" stroke-linecap="round" opacity="0.6"/><line x1="475.5" y1="718.8" x2="471.0" y2="744.4" stroke="__FG__" stroke-width="10" stroke-linecap="round" opacity="0.6"/><line x1="414.0" y1="681.7" x2="394.0" y2="716.4" stroke="__FG__" stroke-width="16" stroke-linecap="round" opacity="0.95"/><line x1="351.1" y1="647.0" x2="331.2" y2="663.7" stroke="__FG__" stroke-width="10" stroke-linecap="round" opacity="0.6"/><line x1="314.7" y1="583.8" x2="290.2" y2="592.7" stroke="__FG__" stroke-width="10" stroke-linecap="round" opacity="0.6"/><line x1="316.0" y1="512.0" x2="276.0" y2="512.0" stroke="__FG__" stroke-width="16" stroke-linecap="round" opacity="0.95"/><line x1="314.7" y1="440.2" x2="290.2" y2="431.3" stroke="__FG__" stroke-width="10" stroke-linecap="round" opacity="0.6"/><line x1="351.1" y1="377.0" x2="331.2" y2="360.3" stroke="__FG__" stroke-width="10" stroke-linecap="round" opacity="0.6"/><line x1="414.0" y1="342.3" x2="394.0" y2="307.6" stroke="__FG__" stroke-width="16" stroke-linecap="round" opacity="0.95"/><line x1="475.5" y1="305.2" x2="471.0" y2="279.6" stroke="__FG__" stroke-width="10" stroke-linecap="round" opacity="0.6"/><line x1="548.5" y1="305.2" x2="553.0" y2="279.6" stroke="__FG__" stroke-width="10" stroke-linecap="round" opacity="0.6"/><line x1="610.0" y1="342.3" x2="630.0" y2="307.6" stroke="__FG__" stroke-width="16" stroke-linecap="round" opacity="0.95"/><rect x="464" y="470" width="96" height="236" rx="48" fill="__FG__"/><circle cx="512" cy="378" r="54" fill="#F47B35"/></g><path d="M628.4187499999999 712.2125C651.6999999999999 712.2125 666.5437499999999 704.0875 676.3874999999999 686.275H677.0124999999999V709.4H729.5124999999999V598.30625C729.5124999999999 561.9 703.1062499999999 540.80625 655.1374999999999 540.80625C607.3249999999999 540.80625 580.2937499999999 562.05625 577.9499999999999 597.8375H627.9499999999999C629.0437499999999 586.5875 638.2624999999999 579.4 653.2624999999999 579.4C667.4812499999999 579.4 676.2312499999999 586.11875 676.2312499999999 595.9625V596.74375C676.2312499999999 606.5875 665.4499999999999 608.93125 635.9187499999999 611.43125C600.7624999999999 614.24375 571.8562499999999 626.275 571.8562499999999 663.30625C571.8562499999999 696.11875 595.4499999999999 712.2125 628.4187499999999 712.2125ZM644.8249999999999 677.05625C631.6999999999999 677.05625 622.7937499999999 670.9625 622.7937499999999 660.80625C622.7937499999999 650.025 633.1062499999999 644.0875 647.4812499999999 641.9C660.7624999999999 639.7125 670.9187499999999 637.68125 676.6999999999999 635.025V650.025C676.6999999999999 666.275 662.7937499999999 677.05625 644.8249999999999 677.05625Z" fill="__FG__"/><path d="M753.5124999999999 709.4H807.2624999999999V624.86875C807.2624999999999 601.43125 820.5437499999999 587.99375 839.7624999999999 587.99375C847.5749999999999 587.99375 857.1062499999999 588.30625 861.0124999999999 588.4625V544.0875C856.6374999999999 543.93125 852.1062499999999 543.775 846.3249999999999 543.775C824.2937499999999 543.775 811.9499999999999 552.525 806.0124999999999 573.4625H805.5437499999999V544.4H753.5124999999999Z" fill="__FG__"/></svg>`;
+const RATIO = 1.629;
 
-export function LogoMark({ size = 28, color = "#FFFFFF" }: { size?: number; color?: string }) {
-  return (
-    <Svg width={size} height={size} viewBox="150 150 724 724">
-      <Path d="M734.9 712.7 A300 300 0 1 1 734.9 311.3" fill="none" stroke={color} strokeWidth={116} strokeLinecap="round" />
-      <Path d="M734.9 712.7 A300 300 0 0 1 553.8 809.1" fill="none" stroke={ORANGE} strokeWidth={116} />
-      <Circle cx={734.9} cy={712.7} r={58} fill={ORANGE} />
-      {TICKS.map((tk, i) => <Path key={i} d={tk.d} stroke={color} strokeWidth={tk.w} strokeLinecap="round" opacity={tk.o} />)}
-      <Rect x={464} y={470} width={96} height={236} rx={48} fill={color} />
-      <Circle cx={512} cy={378} r={54} fill={ORANGE} />
-    </Svg>
-  );
+export function Logo({ height = 24, color = "#FFFFFF" }: { height?: number; color?: string }) {
+  return <SvgXml xml={XML.split("__FG__").join(color)} width={height * RATIO} height={height} />;
 }
