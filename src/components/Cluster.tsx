@@ -35,7 +35,7 @@ export function Cluster() {
     <LinearGradient colors={[c.petrol, c.petrol2]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ paddingTop: ins.top + 14, paddingHorizontal: 16, paddingBottom: 20, borderBottomLeftRadius: 22, borderBottomRightRadius: 22 }}>
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
         <View style={{ flexShrink: 1 }}>
-          <View style={{ direction: "ltr", alignItems: "flex-start", marginBottom: 4 }}><Logo height={22} color={c.petrolInk} /></View>
+          <View style={{ direction: "ltr", alignItems: "flex-start", marginBottom: 4 }}><Logo height={30} color={c.petrolInk} /></View>
           <T w="bold" size={22} color={c.petrolInk}>{S.car ? carName(S) : "ICar"}</T>
           <T size={13} color={c.petrolInk} style={{ opacity: 0.8 }}>
             {S.car ? [S.car.body, S.car.cc && t("{n} سي سي", { n: S.car.cc }), S.car.fuel, S.car.color].filter(Boolean).join(" · ") : t("صيانة، أعطال، قطع غيار، وسعر عربيتك في مكان واحد")}

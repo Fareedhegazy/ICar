@@ -37,7 +37,7 @@ export function Onboarding({ visible, onDone }: { visible: boolean; onDone: () =
     <Modal visible={visible} animationType="fade" onRequestClose={finish}>
       <SafeAreaView style={{ flex: 1, backgroundColor: c.petrol }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: 16 }}>
-          <Logo height={26} color={c.petrolInk} />
+          <Logo height={34} color={c.petrolInk} />
           {!last || isVideo ? (
             <Pressable onPress={finish} hitSlop={10} style={{ borderWidth: 1, borderColor: "rgba(255,255,255,0.5)", borderRadius: 9, paddingHorizontal: 12, paddingVertical: 6 }}>
               <T w="semi" size={13} color={c.petrolInk}>{t("تخطّي")}</T>
