@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { introVideoFor } from "../data/intro";
 import { getLang, t } from "../i18n";
 import { useColors } from "../theme";
+import { LogoMark } from "./Logo";
 import { Btn, T } from "./ui";
 
 const SLIDES = [
@@ -36,7 +37,10 @@ export function Onboarding({ visible, onDone }: { visible: boolean; onDone: () =
     <Modal visible={visible} animationType="fade" onRequestClose={finish}>
       <SafeAreaView style={{ flex: 1, backgroundColor: c.petrol }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: 16 }}>
-          <T w="bold" size={15} color={c.petrolInk} style={{ letterSpacing: 1.5, writingDirection: "ltr" }}>I<T w="bold" size={15} color={c.accent}>CAR</T></T>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8, direction: "ltr" }}>
+            <LogoMark size={22} color={c.petrolInk} />
+            <T w="bold" size={15} color={c.petrolInk} style={{ letterSpacing: 1.5, writingDirection: "ltr" }}>I<T w="bold" size={15} color={c.accent}>CAR</T></T>
+          </View>
           {!last || isVideo ? (
             <Pressable onPress={finish} hitSlop={10} style={{ borderWidth: 1, borderColor: "rgba(255,255,255,0.5)", borderRadius: 9, paddingHorizontal: 12, paddingVertical: 6 }}>
               <T w="semi" size={13} color={c.petrolInk}>{t("تخطّي")}</T>

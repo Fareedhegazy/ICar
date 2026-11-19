@@ -58,7 +58,20 @@
           "isIosBackgroundLocationEnabled": false
         }
       ],
-      "expo-video"
+      "expo-video",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 180,
+          "resizeMode": "contain",
+          "backgroundColor": "#0B3D63",
+          "dark": {
+            "image": "./assets/splash-icon.png",
+            "backgroundColor": "#0B2C4A"
+          }
+        }
+      ]
     ]
   }
 }
