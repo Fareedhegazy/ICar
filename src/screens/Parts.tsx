@@ -4,7 +4,7 @@ import { Linking, Platform, Pressable, View } from "react-native";
 import { aiErrorText, askAI } from "../ai";
 import { PARTS } from "../data/catalog";
 import { getCountry } from "../data/countries";
-import { ADVERTISE_URL, FEATURED } from "../data/shops";
+import { ADVERTISE_WHATSAPP, FEATURED } from "../data/shops";
 import { PartInfo, carContext } from "../logic/due";
 import { isRTL, t } from "../i18n";
 import { useStore } from "../store";
@@ -78,7 +78,7 @@ export default function Parts() {
       <Card style={{ backgroundColor: c.sunk }}>
         <T w="semi">{t("عندك محل قطع غيار أو مركز صيانة؟")}</T>
         <T size={13} color={c.muted}>{t("اعرض محلك هنا قدام أصحاب العربيات اللي حواليك.")}</T>
-        {ADVERTISE_URL ? <Btn small title={t("أعلن معانا")} onPress={() => Linking.openURL(ADVERTISE_URL)} /> : <T size={12} color={c.muted}>{t("الإعلانات هتبدأ قريب.")}</T>}
+        {ADVERTISE_WHATSAPP ? <Btn small title={t("أعلن معانا على واتساب")} onPress={() => Linking.openURL(`https://wa.me/${ADVERTISE_WHATSAPP}?text=${encodeURIComponent(t("أهلاً، عايز أعلن عن محلي في تطبيق ICar."))}`)} /> : <T size={12} color={c.muted}>{t("الإعلانات هتبدأ قريب.")}</T>}
       </Card>
 
       <H>{t("قطع الغيار بالرقم")}</H>

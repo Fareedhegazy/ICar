@@ -414,7 +414,6 @@ const d: Record<string, string> = {
   "الموقع": "Standort",
   "عندك محل قطع غيار أو مركز صيانة؟": "Hast du ein Ersatzteilgeschäft oder eine Werkstatt?",
   "اعرض محلك هنا قدام أصحاب العربيات اللي حواليك.": "Zeig dein Geschäft hier den Autobesitzern in deiner Nähe.",
-  "أعلن معانا": "Bei uns werben",
   "الإعلانات هتبدأ قريب.": "Einträge starten bald.",
   "صوّر الرخصة وخلاص": "Einfach den Fahrzeugschein fotografieren",
   "التطبيق بيطلّع بيانات عربيتك ومواصفاتها لوحده. أو اكتبها بإيدك في دقيقة.": "Die App trägt Daten und technische Werte deines Autos selbst ein. Oder tipp sie in einer Minute ein.",
@@ -428,5 +427,7 @@ const d: Record<string, string> = {
   "يلا نبدأ": "Los geht's",
   "التالي": "Weiter",
   "شوف شرح التطبيق تاني": "App-Einführung erneut ansehen",
+  "أعلن معانا على واتساب": "Per WhatsApp bei uns werben",
+  "أهلاً، عايز أعلن عن محلي في تطبيق ICar.": "Hallo, ich möchte mein Geschäft in der ICar-App bewerben.",
 };
 export default d;

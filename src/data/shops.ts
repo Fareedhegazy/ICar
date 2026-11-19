@@ -5,5 +5,5 @@ export type FeaturedShop = { name: string; country: string; city?: string; makes
 
 export const FEATURED: FeaturedShop[] = [];
 
-/** Where shop owners ask about advertising (a WhatsApp link, form or page). Empty hides the button. */
-export const ADVERTISE_URL = "";
+/** WhatsApp number (international format, digits only) shop owners message to advertise. Empty hides the button. */
+export const ADVERTISE_WHATSAPP = "201004468862";
